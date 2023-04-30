@@ -7,13 +7,14 @@ using Telegram.Bot.Types.ReplyMarkups;
 using private_data;
 using myLib;
 
-
+//Инициализация меню
 List<Supply> allSupplies = new List<Supply>();
 
-Supply food = new Supply("Буругер: Рад", 380);
+Supply food = new Supply("Бургер: Рад", 380);
 Supply drink = new Supply("Пиво: Апа", 190);
 Supply otherFood = new Supply("Компот", 60);
 
+//Добавление объектов в список меню
 allSupplies.Add(food);
 allSupplies.Add(drink);
 allSupplies.Add(otherFood);
@@ -25,7 +26,7 @@ async static void ShowMenu(List<Supply> supplies, ITelegramBotClient botClient, 
         Message sentMessage = await botClient.SendTextMessageAsync(
             chatId: chatId,
             text: $"{supply.Name} | цена = {supply.Coast}р",
-            disableNotification: false,
+            disableNotification: true,
             replyMarkup: replyKeyboardMarkup,
             cancellationToken: cancellationToken);
     }
@@ -47,8 +48,6 @@ ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
     new KeyboardButton[] { buttons.button3 },
     new KeyboardButton[] { buttons.button2 },
     new KeyboardButton[] { buttons.button5 },
-
-
 })
 {
     ResizeKeyboard = true
@@ -70,7 +69,6 @@ botClient.StartReceiving(
 var me = await botClient.GetMeAsync();
 
 Console.WriteLine($"Start listening for @{me.Username}");
-
 
 Console.ReadLine();
 
@@ -156,6 +154,7 @@ public struct Buttons
     public string button4;
     public string button5;
 
+    //Инициализация кнопок
     public Buttons()
     {
         button1 = "Show menu";
