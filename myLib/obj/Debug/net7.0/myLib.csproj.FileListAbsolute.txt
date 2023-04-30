@@ -1,0 +1,12 @@
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\obj\Debug\net7.0\myLib.csproj.AssemblyReference.cache
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\obj\Debug\net7.0\myLib.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\obj\Debug\net7.0\myLib.AssemblyInfoInputs.cache
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\obj\Debug\net7.0\myLib.AssemblyInfo.cs
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\obj\Debug\net7.0\myLib.csproj.CoreCompileInputs.cache
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\bin\Debug\net7.0\myLib.deps.json
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\bin\Debug\net7.0\myLib.dll
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\bin\Debug\net7.0\myLib.pdb
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\obj\Debug\net7.0\myLib.dll
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\obj\Debug\net7.0\refint\myLib.dll
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\obj\Debug\net7.0\myLib.pdb
+C:\Users\Valetra\Desktop\C#\TelegramBot\myLib\obj\Debug\net7.0\ref\myLib.dll
