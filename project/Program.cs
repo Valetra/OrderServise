@@ -127,7 +127,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
             // second row
             new []
             {
-                InlineKeyboardButton.WithCallbackData(text: "отмена заказа", callbackData: "21"),
+                InlineKeyboardButton.WithCallbackData(text: "отмена заказа", callbackData: "cancelOrder"),
             },
         });
 
