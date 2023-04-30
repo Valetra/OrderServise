@@ -115,11 +115,28 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
     }
     else if (messageText == buttons.button4)
     {
-        Message sentMessage = await botClient.SendTextMessageAsync(
+        InlineKeyboardMarkup inlineKeyboard = new(new[]
+        {
+            // first row
+            new []
+            {
+                InlineKeyboardButton.WithCallbackData(text: "Бургеры", callbackData: "burgers"),
+                InlineKeyboardButton.WithCallbackData(text: "Пиво", callbackData: "beer"),
+                InlineKeyboardButton.WithCallbackData(text: "Напитки б/а", callbackData: "drinksN/A"),
+            },
+            // second row
+            new []
+            {
+                InlineKeyboardButton.WithCallbackData(text: "отмена заказа", callbackData: "21"),
+            },
+        });
+
+        Message sentmessage = await botClient.SendTextMessageAsync(
             chatId: chatId,
-            text: "Make your order here:",
+            text: "Выберите категорию:",
+            parseMode: ParseMode.MarkdownV2,
             disableNotification: true,
-            replyMarkup: replyKeyboardMarkup,
+            replyMarkup: inlineKeyboard,
             cancellationToken: cancellationToken);
     }
     else
@@ -154,7 +171,7 @@ public struct Buttons
     public string button4;
     public string button5;
 
-    //Инициализация кнопок
+    //Инициализация кнопок меню
     public Buttons()
     {
         button1 = "Show menu";
