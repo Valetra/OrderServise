@@ -1629,19 +1629,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Valetra\\.nuget\\packages\\": {}
+    "/home/valetra/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Valetra\\Desktop\\C#\\TelegramBot\\project\\TelegramBot.csproj",
+      "projectUniqueName": "/home/valetra/c#_practice/TelegramBot/project/TelegramBot.csproj",
       "projectName": "TelegramBot",
-      "projectPath": "C:\\Users\\Valetra\\Desktop\\C#\\TelegramBot\\project\\TelegramBot.csproj",
-      "packagesPath": "C:\\Users\\Valetra\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Valetra\\Desktop\\C#\\TelegramBot\\project\\obj\\",
+      "projectPath": "/home/valetra/c#_practice/TelegramBot/project/TelegramBot.csproj",
+      "packagesPath": "/home/valetra/.nuget/packages/",
+      "outputPath": "/home/valetra/c#_practice/TelegramBot/project/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Valetra\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/valetra/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
@@ -1653,8 +1653,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "C:\\Users\\Valetra\\Desktop\\C#\\TelegramBot\\myLib\\myLib.csproj": {
-              "projectPath": "C:\\Users\\Valetra\\Desktop\\C#\\TelegramBot\\myLib\\myLib.csproj"
+            "/home/valetra/c#_practice/TelegramBot/myLib/myLib.csproj": {
+              "projectPath": "/home/valetra/c#_practice/TelegramBot/myLib/myLib.csproj"
             }
           }
         }
@@ -1693,12 +1693,18 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[7.0.3, 7.0.3]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/7.0.103/RuntimeIdentifierGraph.json"
       }
     }
   }

@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "6wKcUJ8LG6ExWZjs7EqIutKNT2+kcmvmH/OBtkRuvJjV4nFMkl1r3Jwb39s1W6nVBIz/NdPltSsi6PQ0loyrbA==",
+  "dgSpecHash": "sh4bPBrDDQuRuX6s8EpigFGVQ16chFacU27Epr5kLmoHSmdrPgmBHyIec1HhkbY9Te0ci386pGqvb8GY/NXCmQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Valetra\\Desktop\\C#\\TelegramBot\\myLib\\myLib.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/home/valetra/c#_practice/TelegramBot/myLib/myLib.csproj",
+  "expectedPackageFiles": [
+    "/home/valetra/.nuget/packages/microsoft.aspnetcore.app.ref/7.0.3/microsoft.aspnetcore.app.ref.7.0.3.nupkg.sha512"
+  ],
   "logs": []
 }
