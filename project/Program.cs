@@ -10,5 +10,4 @@ Console.WriteLine($"Start listening for @{await radBot.GetUsername()}");
 
 Console.ReadLine();
 
-// Send cancellation request to stop bot
 cancellationTokenSource.Cancel();
