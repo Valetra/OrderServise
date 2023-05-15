@@ -63,7 +63,7 @@ public class RadBot
         switch (messageText)
         {
             case "/start":
-                Start(chatId, cancellationToken);
+                await Start(chatId, cancellationToken);
                 break;
             case BotMenuButtons.showMenu:
                 ShowMenu(chatId, cancellationToken);
@@ -93,7 +93,7 @@ public class RadBot
         return Task.CompletedTask;
     }
 
-    private async void Start(long chatId, CancellationToken cancellationToken)
+    private async Task Start(long chatId, CancellationToken cancellationToken)
     {
         await _client.SendTextMessageAsync(
                         chatId: chatId,
