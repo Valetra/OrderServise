@@ -2,34 +2,35 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using apiForRadBot.Data.Models;
+using apiForRadBot.Data.Repositories.Interfaces;
 
 namespace apiForRadBot.Core.Services.Implimentations;
 
 public class BotService : IBotService
 {
-    private readonly IBotRepository _botRepository;
+    private readonly ISupplyRepository _supplyRepository;
 
-    public BotService(IBotRepository botRepository)
+    public BotService(ISupplyRepository supplyRepository)
     {
-        _botRepository = botRepository;
+        _supplyRepository = supplyRepository;
     }
 
-    public async Task<IEnumerable<Supply>> GetAll() => await _botRepository.GetAll();
-    public async Task<Supply> Get(Guid id) => await _botRepository.Get(id);
+    public async Task<IEnumerable<Supply>> GetAll() => await _supplyRepository.GetAll();
+    public async Task<Supply> Get(Guid id) => await _supplyRepository.Get(id);
 
     public async Task<Supply> Add(Supply supply)
     {
-        return await _botRepository.Create(supply);
+        return await _supplyRepository.Create(supply);
 
     }
 
     public async Task<Supply> Update(Supply supply)
     {
-        return await _botRepository.Update(supply);
+        return await _supplyRepository.Update(supply);
     }
 
     public async Task Delete(Guid id)
     {
-        return await _botRepository.Delete(id);
+        await _supplyRepository.Delete(id);
     }
 }

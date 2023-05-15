@@ -1,4 +1,8 @@
+using apiForRadBot.Core.Services.Implimentations;
+using apiForRadBot.Core.Services.Interfaces;
 using apiForRadBot.Data;
+using apiForRadBot.Data.Repositories.Implimentations;
+using apiForRadBot.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +16,9 @@ var configuration = builder.Configuration;
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<ISupplyRepository, SupplyRepository>();
+builder.Services.AddScoped<IBotService, BotService>();
 
 var app = builder.Build();
 

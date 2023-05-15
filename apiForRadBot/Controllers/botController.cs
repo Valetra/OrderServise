@@ -1,40 +1,69 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using apiForRadBot.Core.Services.Interfaces;
+using apiForRadBot.Data.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace apiForRadBot.Data;
 
 [Route("api/[controller]")]
 [ApiController]
-public class botController : ControllerBase
+public class BotController : ControllerBase
 {
-    // GET: api/bot
+    private readonly IBotService _botService;
+    public BotController(IBotService botService)
+    {
+        _botService = botService;
+    }
+
     [HttpGet]
-    public IEnumerable<string> Get()
+    public async Task<ActionResult<IEnumerable<Supply>>> GetAll()
     {
-        return new string[] { "value1", "value2" };
+        return Ok(await _botService.GetAll());
     }
 
-    // GET api/bot/5
+
     [HttpGet("{id}")]
-    public string Get(int id)
+    public async Task<ActionResult<Supply>> GetSupply(Guid id)
     {
-        return "value";
+        var supply = await _botService.Get(id);
+        return (supply == null) ? Ok(supply) : NotFound();
     }
 
-    // POST api/bot
+
     [HttpPost]
-    public void Post([FromBody] string value)
+    public async Task<ActionResult<Supply>> PostUser(Supply supply)
     {
+        Supply newSupply;
+        newSupply = await _botService.Add(supply);
+
+        return CreatedAtAction(nameof(GetSupply), new { id = newSupply.Id }, newSupply);
     }
 
-    // PUT api/bot/5
+    //FIX this method
     [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    public async Task<ActionResult<Supply>> PutSupply(Guid id, Supply supply)
     {
+        try
+        {
+            var supplyToUpdate = await _botService.Get(id);
+
+            if (supplyToUpdate == null)
+                return NotFound($"Supply with id = {id} not found");
+
+            return await _botService.Update(supply);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                "Error updating data");
+        }
     }
 
-    // DELETE api/bot/5
+
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    public async Task<IActionResult> DeleteSupply(Guid id)
     {
+        await _botService.Delete(id);
+        return NoContent();
     }
 }
