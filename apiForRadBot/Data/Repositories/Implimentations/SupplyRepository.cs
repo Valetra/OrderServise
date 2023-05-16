@@ -4,48 +4,45 @@ using Microsoft.EntityFrameworkCore;
 
 namespace apiForRadBot.Data.Repositories.Implimentations;
 
-public class SupplyRepository : ISupplyRepository
+public class SupplyRepository : BaseRepository<Supply>, ISupplyRepository
 {
-    private AppDbContext _context { get; set; }
-    public SupplyRepository(AppDbContext context)
+    private AppDbContext _context => (AppDbContext)Context;
+    private DbSet<Supply> _supplies;
+
+    public SupplyRepository(AppDbContext context) : base(context)
     {
-        _context = context;
+        _supplies = _context.Supplies;
     }
 
     public async Task<List<Supply>> GetAll()
     {
-        return await _context.Supplies.ToListAsync();
+        return await _supplies.ToListAsync();
     }
 
-    public async Task<Supply?> Get(Guid id)
+    public async Task<Supply> Get(Guid id)
     {
-        return await _context.Supplies.FirstOrDefaultAsync(m => m.Id == id);
+        return await _supplies.FirstOrDefaultAsync(m => m.Id == id);
     }
 
     public async Task<Supply> Create(Supply supply)
     {
-        await _context.Supplies.AddAsync(supply);
+        await _supplies.AddAsync(supply);
         await _context.SaveChangesAsync();
         return supply;
     }
 
     public async Task<Supply> Update(Supply supply)
     {
-        var toUpdate = await _context.Supplies.FirstOrDefaultAsync(m => m.Id == supply.Id);
-        if (toUpdate != null)
-        {
-            toUpdate = supply;
-        }
-
-        _context.Update(toUpdate);
+        _context.Update(supply);
         await _context.SaveChangesAsync();
-        return toUpdate;
+        return supply;
     }
 
     public async Task Delete(Guid id)
     {
-        var toDelete = await _context.Supplies.FirstOrDefaultAsync(m => m.Id == id);
-        _context.Supplies.Remove(toDelete);
+        var toDelete = await _supplies.FirstOrDefaultAsync(m => m.Id == id);
+        _supplies.Remove(toDelete);
         await _context.SaveChangesAsync();
     }
+
 }

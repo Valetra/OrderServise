@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using apiForRadBot.Data.Models.Base;
+using Microsoft.EntityFrameworkCore;
 
 namespace apiForRadBot.Data.Models;
 
 [Index(nameof(Name), IsUnique = true)]
-public class Supply
+public class Supply : BaseModel
 {
-    public Guid Id { get; set; }
     public string? Name { get; set; }
     public int Price { get; set; }
     public TimeSpan? CookingTime { get; set; }

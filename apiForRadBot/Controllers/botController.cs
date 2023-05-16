@@ -26,7 +26,7 @@ public class BotController : ControllerBase
     public async Task<ActionResult<Supply>> GetSupply(Guid id)
     {
         var supply = await _botService.Get(id);
-        return (supply == null) ? Ok(supply) : NotFound();
+        return (supply != null) ? Ok(supply) : NotFound($"Supply with id = {id}, was not found.");
     }
 
 
@@ -39,24 +39,19 @@ public class BotController : ControllerBase
         return CreatedAtAction(nameof(GetSupply), new { id = newSupply.Id }, newSupply);
     }
 
-    //FIX this method
-    [HttpPut("{id}")]
-    public async Task<ActionResult<Supply>> PutSupply(Guid id, Supply supply)
+    [HttpPut]
+    public async Task<ActionResult<Supply>> PutSupply(Supply supply)
     {
-        try
-        {
-            var supplyToUpdate = await _botService.Get(id);
+        Supply existsSupply = await _botService.Get(supply.Id);
 
-            if (supplyToUpdate == null)
-                return NotFound($"Supply with id = {id} not found");
+        if (existsSupply == null)
+            return NotFound($"Supply with id = {supply.Id}, was not found.");
 
-            return await _botService.Update(supply);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError,
-                "Error updating data");
-        }
+        existsSupply.Name = supply.Name;
+        existsSupply.Price = supply.Price;
+        existsSupply.CookingTime = supply.CookingTime;
+
+        return await _botService.Update(existsSupply);
     }
 
 
