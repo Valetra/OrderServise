@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace apiForRadBot.Data;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
-public class BotController : ControllerBase
+public class SupplyController : ControllerBase
 {
     private readonly IBotService _botService;
-    public BotController(IBotService botService)
+    public SupplyController(IBotService botService)
     {
         _botService = botService;
     }
@@ -31,7 +31,7 @@ public class BotController : ControllerBase
 
 
     [HttpPost]
-    public async Task<ActionResult<Supply>> PostUser(Supply supply)
+    public async Task<ActionResult<Supply>> PostSupply(Supply supply)
     {
         Supply newSupply;
         newSupply = await _botService.Add(supply);
