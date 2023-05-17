@@ -19,14 +19,14 @@ public class OrderController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Order>>> GetAll()
     {
-        return Ok(await _botService.GetAll());
+        return Ok(await _botService.GetAllSupplies());
     }
 
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Order>> GetOrder(Guid id)
     {
-        var supply = await _botService.Get(id);
+        var supply = await _botService.GetSupply(id);
         return (supply != null) ? Ok(supply) : NotFound($"Supply with id = {id}, was not found.");
     }
 
@@ -35,7 +35,7 @@ public class OrderController : ControllerBase
     public async Task<ActionResult<Order>> PostOrder(Supply supply)
     {
         Supply newSupply;
-        newSupply = await _botService.Add(supply);
+        newSupply = await _botService.AddSupply(supply);
 
         return CreatedAtAction(nameof(GetOrder), new { id = newSupply.Id }, newSupply);
     }
@@ -60,7 +60,7 @@ public class OrderController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteOrder(Guid id)
     {
-        await _botService.Delete(id);
+        await _botService.DeleteSupply(id);
         return NoContent();
     }
 }

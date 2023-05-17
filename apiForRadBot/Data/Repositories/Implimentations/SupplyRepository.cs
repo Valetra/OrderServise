@@ -44,5 +44,4 @@ public class SupplyRepository : BaseRepository<Supply>, ISupplyRepository
         _supplies.Remove(toDelete);
         await _context.SaveChangesAsync();
     }
-
 }

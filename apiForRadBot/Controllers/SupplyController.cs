@@ -18,14 +18,14 @@ public class SupplyController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Supply>>> GetAll()
     {
-        return Ok(await _botService.GetAll());
+        return Ok(await _botService.GetAllSupplies());
     }
 
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Supply>> GetSupply(Guid id)
     {
-        var supply = await _botService.Get(id);
+        var supply = await _botService.GetSupply(id);
         return (supply != null) ? Ok(supply) : NotFound($"Supply with id = {id}, was not found.");
     }
 
@@ -34,7 +34,7 @@ public class SupplyController : ControllerBase
     public async Task<ActionResult<Supply>> PostSupply(Supply supply)
     {
         Supply newSupply;
-        newSupply = await _botService.Add(supply);
+        newSupply = await _botService.AddSupply(supply);
 
         return CreatedAtAction(nameof(GetSupply), new { id = newSupply.Id }, newSupply);
     }
@@ -42,7 +42,7 @@ public class SupplyController : ControllerBase
     [HttpPut]
     public async Task<ActionResult<Supply>> PutSupply(Supply supply)
     {
-        Supply existsSupply = await _botService.Get(supply.Id);
+        Supply existsSupply = await _botService.GetSupply(supply.Id);
 
         if (existsSupply == null)
             return NotFound($"Supply with id = {supply.Id}, was not found.");
@@ -51,14 +51,14 @@ public class SupplyController : ControllerBase
         existsSupply.Price = supply.Price;
         existsSupply.CookingTime = supply.CookingTime;
 
-        return await _botService.Update(existsSupply);
+        return await _botService.UpdateSupply(existsSupply);
     }
 
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteSupply(Guid id)
     {
-        await _botService.Delete(id);
+        await _botService.DeleteSupply(id);
         return NoContent();
     }
 }
