@@ -20,7 +20,7 @@ public class BaseRepository<TDbModel> : IBaseRepository<TDbModel> where TDbModel
         return await _entities.ToListAsync();
     }
 
-    public async Task<TDbModel> Get(Guid id)
+    public async Task<TDbModel?> Get(Guid id)
     {
         return await _entities.FirstOrDefaultAsync(m => m.Id == id);
     }

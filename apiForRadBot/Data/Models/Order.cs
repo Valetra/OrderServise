@@ -5,9 +5,7 @@ namespace apiForRadBot.Data.Models;
 
 public class Order : BaseModel
 {
-    public List<Guid>? SuppliesId { get; set; }
-    [ForeignKey("SuppliesId")]
-    public virtual List<Supply>? Supplies { get; set; }
-    public string? Status { get; set; }
-    public bool Payed { get; set; }
+    public string? Status { get; set; } = "Unconfirmed";
+    public bool Payed { get; set; } = false;
+    public List<Supply>? Supplies { get; set; } = new();
 }

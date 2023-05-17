@@ -4,6 +4,7 @@ using apiForRadBot.Data;
 using apiForRadBot.Data.Repositories.Implimentations;
 using apiForRadBot.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +15,14 @@ builder.Services.AddSwaggerGen();
 
 var configuration = builder.Configuration;
 
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<ISupplyRepository, SupplyRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IBotService, BotService>();
 
 var app = builder.Build();

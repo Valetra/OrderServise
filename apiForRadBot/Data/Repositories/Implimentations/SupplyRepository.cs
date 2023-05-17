@@ -14,31 +14,31 @@ public class SupplyRepository : BaseRepository<Supply>, ISupplyRepository
         _supplies = _context.Supplies;
     }
 
-    public async Task<List<Supply>> GetAll()
+    public async Task<List<Supply>> GetAllSupplies()
     {
         return await _supplies.ToListAsync();
     }
 
-    public async Task<Supply> Get(Guid id)
+    public async Task<Supply?> GetSupply(Guid id)
     {
         return await _supplies.FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task<Supply> Create(Supply supply)
+    public async Task<Supply> CreateSupply(Supply supply)
     {
         await _supplies.AddAsync(supply);
         await _context.SaveChangesAsync();
         return supply;
     }
 
-    public async Task<Supply> Update(Supply supply)
+    public async Task<Supply> UpdateSupply(Supply supply)
     {
         _context.Update(supply);
         await _context.SaveChangesAsync();
         return supply;
     }
 
-    public async Task Delete(Guid id)
+    public async Task DeleteSupply(Guid id)
     {
         var toDelete = await _supplies.FirstOrDefaultAsync(m => m.Id == id);
         _supplies.Remove(toDelete);

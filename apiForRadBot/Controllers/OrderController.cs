@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace apiForRadBot.Controllers;
 
-//Установить контроллер в рабочее состояние
 [Route("[controller]")]
 [ApiController]
 public class OrderController : ControllerBase
@@ -19,48 +18,44 @@ public class OrderController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Order>>> GetAll()
     {
-        return Ok(await _botService.GetAllSupplies());
+        return Ok(await _botService.GetAllOrders());
     }
-
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Order>> GetOrder(Guid id)
     {
-        var supply = await _botService.GetSupply(id);
-        return (supply != null) ? Ok(supply) : NotFound($"Supply with id = {id}, was not found.");
+        var order = await _botService.GetOrder(id);
+        return (order != null) ? Ok(order) : NotFound($"Order with id = {id}, was not found.");
     }
 
-
     [HttpPost]
-    public async Task<ActionResult<Order>> PostOrder(Supply supply)
+    public async Task<ActionResult<Order>> PostOrder(Order order)
     {
-        Supply newSupply;
-        newSupply = await _botService.AddSupply(supply);
+        Order newOrder;
+        newOrder = await _botService.AddOrder(order);
 
-        return CreatedAtAction(nameof(GetOrder), new { id = newSupply.Id }, newSupply);
+        return CreatedAtAction(nameof(GetOrder), new { id = newOrder.Id }, newOrder);
     }
 
     [HttpPut]
     public async Task<ActionResult<Order>> PutOrder(Order order)
     {
-        //Supply existsSupply = await _botService.Get(order.Id);
+        Order? existsOrder = await _botService.GetOrder(order.Id);
 
-        //if (existsSupply == null)
-        //    return NotFound($"Supply with id = {order.Id}, was not found.");
+        if (existsOrder == null)
+            return NotFound($"Order with id = {order.Id}, was not found.");
 
-        ////existsSupply.Name = order.Name;
-        ////existsSupply.Price = order.Price;
-        ////existsSupply.CookingTime = order.CookingTime;
+        //existsOrder.Supplies = order.Supplies;
+        existsOrder.Status = order.Status;
+        existsOrder.Payed = order.Payed;
 
-        //return await _botService.Update(order);
-        return order;
+        return await _botService.UpdateOrder(order);
     }
-
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteOrder(Guid id)
     {
-        await _botService.DeleteSupply(id);
+        await _botService.DeleteOrder(id);
         return NoContent();
     }
 }

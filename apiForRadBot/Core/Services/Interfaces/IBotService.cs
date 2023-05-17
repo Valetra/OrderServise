@@ -13,7 +13,7 @@ public interface IBotService
 
     //Order processing
     Task<IEnumerable<Order>> GetAllOrders();
-    Task<Order> GetOrder(Guid id);
+    Task<Order?> GetOrder(Guid id);
     Task<Order> AddOrder(Order order);
     Task<Order> UpdateOrder(Order order);
     Task DeleteOrder(Guid id);

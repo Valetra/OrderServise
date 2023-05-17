@@ -42,7 +42,7 @@ public class SupplyController : ControllerBase
     [HttpPut]
     public async Task<ActionResult<Supply>> PutSupply(Supply supply)
     {
-        Supply existsSupply = await _botService.GetSupply(supply.Id);
+        Supply? existsSupply = await _botService.GetSupply(supply.Id);
 
         if (existsSupply == null)
             return NotFound($"Supply with id = {supply.Id}, was not found.");

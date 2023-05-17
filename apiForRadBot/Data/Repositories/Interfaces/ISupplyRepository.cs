@@ -4,9 +4,9 @@ namespace apiForRadBot.Data.Repositories.Interfaces;
 
 public interface ISupplyRepository
 {
-    Task<List<Supply>> GetAll();
-    Task<Supply?> Get(Guid id);
-    Task<Supply> Create(Supply supply);
-    Task<Supply> Update(Supply supply);
-    Task Delete(Guid id);
+    Task<List<Supply>> GetAllSupplies();
+    Task<Supply?> GetSupply(Guid id);
+    Task<Supply> CreateSupply(Supply supply);
+    Task<Supply> UpdateSupply(Supply supply);
+    Task DeleteSupply(Guid id);
 }

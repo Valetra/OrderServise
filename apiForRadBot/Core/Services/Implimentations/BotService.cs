@@ -18,27 +18,27 @@ public class BotService : IBotService
     }
 
     //Supply processing
-    public async Task<IEnumerable<Supply>> GetAllSupplies() => await _supplyRepository.GetAll();
-    public async Task<Supply> GetSupply(Guid id) => await _supplyRepository.Get(id);
+    public async Task<IEnumerable<Supply>> GetAllSupplies() => await _supplyRepository.GetAllSupplies();
+    public async Task<Supply?> GetSupply(Guid id) => await _supplyRepository.GetSupply(id);
 
     public async Task<Supply> AddSupply(Supply supply)
     {
-        return await _supplyRepository.Create(supply);
+        return await _supplyRepository.CreateSupply(supply);
     }
 
     public async Task<Supply> UpdateSupply(Supply supply)
     {
-        return await _supplyRepository.Update(supply);
+        return await _supplyRepository.UpdateSupply(supply);
     }
 
     public async Task DeleteSupply(Guid id)
     {
-        await _supplyRepository.Delete(id);
+        await _supplyRepository.DeleteSupply(id);
     }
 
     //Order processing
     public async Task<IEnumerable<Order>> GetAllOrders() => await _orderRepository.GetAll();
-    public async Task<Order> GetOrder(Guid id) => await _orderRepository.Get(id);
+    public async Task<Order?> GetOrder(Guid id) => await _orderRepository.Get(id);
     public async Task<Order> AddOrder(Order order)
     {
         return await _orderRepository.Create(order);
