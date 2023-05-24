@@ -1,7 +1,10 @@
 ﻿using apiForRadBot.Core.Services.Interfaces;
 using apiForRadBot.Data.Models;
+using apiForRadBot.Data.RequestObject;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using apiForRadBot.Core.Mapper;
+using apiForRadBot.Data.ResponseObject;
 
 namespace apiForRadBot.Controllers;
 
@@ -29,12 +32,20 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Order>> PostOrder(Order order)
+    public async Task<ActionResult<Order>> PostOrder(PostOrderObject order)
     {
-        Order newOrder;
-        newOrder = await _botService.AddOrder(order);
+        Order orderEntity = new();
 
-        return CreatedAtAction(nameof(GetOrder), new { id = newOrder.Id }, newOrder);
+        orderEntity.Supplies = OrderExtensions.ToSuppliesList(order);
+
+        for (int i = orderEntity.Supplies.Count - 1; i >= 0; i--)
+        {
+            orderEntity.Supplies[i] = await _botService.GetSupply(orderEntity.Supplies[i].Id);
+        }
+
+        await _botService.AddOrder(orderEntity);
+
+        return CreatedAtAction(nameof(GetOrder), new { id = orderEntity.Id }, orderEntity);
     }
 
     [HttpPut]

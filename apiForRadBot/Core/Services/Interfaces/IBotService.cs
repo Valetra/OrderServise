@@ -1,4 +1,5 @@
 ﻿using apiForRadBot.Data.Models;
+using apiForRadBot.Data.RequestObject;
 
 namespace apiForRadBot.Core.Services.Interfaces;
 
@@ -6,7 +7,7 @@ public interface IBotService
 {
     //Supply processing
     Task<IEnumerable<Supply>> GetAllSupplies();
-    Task<Supply?> GetSupply(Guid id);
+    Task<Supply> GetSupply(Guid id);
     Task<Supply> AddSupply(Supply supply);
     Task<Supply> UpdateSupply(Supply supply);
     Task DeleteSupply(Guid id);
