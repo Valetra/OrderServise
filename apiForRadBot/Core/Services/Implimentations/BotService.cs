@@ -13,11 +13,13 @@ public class BotService : IBotService
 {
     private readonly ISupplyRepository _supplyRepository;
     private readonly IOrderRepository _orderRepository;
+    private readonly IOrderSupplyRepository _orderSupplyRepository;
 
-    public BotService(ISupplyRepository supplyRepository, IOrderRepository orderRepository)
+    public BotService(ISupplyRepository supplyRepository, IOrderRepository orderRepository, IOrderSupplyRepository orderSupplyRepository)
     {
         _supplyRepository = supplyRepository;
         _orderRepository = orderRepository;
+        _orderSupplyRepository = orderSupplyRepository;
     }
 
     //Supply processing
@@ -27,11 +29,21 @@ public class BotService : IBotService
     public async Task<Supply> UpdateSupply(Supply supply) => await _supplyRepository.UpdateSupply(supply);
     public async Task DeleteSupply(Guid id) => await _supplyRepository.DeleteSupply(id);
 
-
     //Order processing
     public async Task<IEnumerable<Order>> GetAllOrders() => await _orderRepository.GetAll();
     public async Task<Order?> GetOrder(Guid id) => await _orderRepository.Get(id);
-    public async Task<Order> AddOrder(Order order) => await _orderRepository.Create(order);
+    public async Task<Order> AddOrder(PostOrderObject order)
+    {
+        Order newOrder = new();
+        Order orderEntity = await _orderRepository.Create(newOrder);
+
+        foreach (var supplyId in order.SuppliesId)
+        {
+            _orderSupplyRepository.Create(orderEntity.Id, supplyId);
+        }
+
+        return orderEntity;
+    }
     public async Task<Order> UpdateOrder(Order order) => await _orderRepository.Update(order);
     public async Task DeleteOrder(Guid id) => await _orderRepository.Delete(id);
     public async Task<Order> ChangeOrderStatus(Order order, string status)

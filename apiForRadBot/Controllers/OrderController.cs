@@ -36,14 +36,7 @@ public class OrderController : ControllerBase
     {
         Order orderEntity = new();
 
-        orderEntity.Supplies = OrderExtensions.ToSuppliesList(order);
-
-        for (int i = orderEntity.Supplies.Count - 1; i >= 0; i--)
-        {
-            orderEntity.Supplies[i] = await _botService.GetSupply(orderEntity.Supplies[i].Id);
-        }
-
-        await _botService.AddOrder(orderEntity);
+        await _botService.AddOrder(order);
 
         return CreatedAtAction(nameof(GetOrder), new { id = orderEntity.Id }, orderEntity);
     }

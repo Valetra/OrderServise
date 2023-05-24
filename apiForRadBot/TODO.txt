@@ -1,8 +1,2 @@
 TODO:
-	[x] Создать "цепь" связанную с таблицей Supplies
-	[x] Починить метод контроллера PutSupply
-	[ ] Создать "цепь" связанную с таблицей Order
-	[ ] Создать таблицу Order (один) -> (ко многим) Supplies
-	[ ] Создать DTO Order - List<Guid> Supplies
-	[ ] Mapper DTO Order -> Order -> to db
-	[ ] 
+	[ ] Решить вопрос с невоможностью создания миграции, при включении OrderSupplyRepository в BotService

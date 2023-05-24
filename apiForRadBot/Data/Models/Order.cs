@@ -7,5 +7,5 @@ public class Order : BaseModel
 {
     public string? Status { get; set; } = "Unconfirmed";
     public bool Payed { get; set; } = false;
-    public List<Supply>? Supplies { get; set; } = new();
+    public ICollection<OrderSupply> OrderSupply { get; set; }
 }
