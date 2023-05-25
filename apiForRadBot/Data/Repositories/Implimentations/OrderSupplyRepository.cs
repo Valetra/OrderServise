@@ -1,6 +1,5 @@
 ﻿using apiForRadBot.Data.Models;
 using apiForRadBot.Data.Repositories.Interfaces;
-using apiForRadBot.Data.RequestObject;
 using Microsoft.EntityFrameworkCore;
 
 namespace apiForRadBot.Data.Repositories.Implimentations;

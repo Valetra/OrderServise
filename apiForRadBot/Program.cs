@@ -23,6 +23,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<ISupplyRepository, SupplyRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderSupplyRepository, OrderSupplyRepository>();
 builder.Services.AddScoped<IBotService, BotService>();
 
 var app = builder.Build();
