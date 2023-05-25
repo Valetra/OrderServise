@@ -39,7 +39,7 @@ public class BotService : IBotService
 
         foreach (var supplyId in order.SuppliesId)
         {
-            _orderSupplyRepository.Create(orderEntity.Id, supplyId);
+            await _orderSupplyRepository.Create(orderEntity.Id, supplyId);
         }
 
         return orderEntity;

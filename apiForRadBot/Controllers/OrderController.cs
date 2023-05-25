@@ -36,7 +36,7 @@ public class OrderController : ControllerBase
     {
         Order orderEntity = new();
 
-        await _botService.AddOrder(order);
+        orderEntity = await _botService.AddOrder(order);
 
         return CreatedAtAction(nameof(GetOrder), new { id = orderEntity.Id }, orderEntity);
     }

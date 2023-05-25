@@ -1,2 +1,2 @@
 TODO:
-	[ ] Решить вопрос с невоможностью создания миграции, при включении OrderSupplyRepository в BotService
+	[х] Решить вопрос с невоможностью создания миграции, при включении OrderSupplyRepository в BotService
