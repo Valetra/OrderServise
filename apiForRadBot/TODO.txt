@@ -1,2 +1,2 @@
 TODO:
-	[х] Решить вопрос с невоможностью создания миграции, при включении OrderSupplyRepository в BotService
+	[х] Создать метод GetOrderSupplies в BotService
