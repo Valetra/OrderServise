@@ -1,2 +1,2 @@
 TODO:
-	[х] Создать метод GetOrderSupplies в BotService
+	[x] Создать метод GetOrderSupplies в BotService

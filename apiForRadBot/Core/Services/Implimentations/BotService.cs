@@ -6,6 +6,8 @@ using apiForRadBot.Data.Repositories.Interfaces;
 using apiForRadBot.Data.RequestObject;
 using apiForRadBot.Core.Mapper;
 using apiForRadBot.Data.Repositories.Implimentations;
+using apiForRadBot.Data.ResponseObject;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace apiForRadBot.Core.Services.Implimentations;
 
@@ -55,5 +57,21 @@ public class BotService : IBotService
     {
         order.Payed = true;
         return await _orderRepository.Update(order);
+    }
+
+    //OrderSupply processing
+    public async Task<ResponseOrderObject> GetOrderSupplies(Order order)
+    {
+        List<OrderSupply> orderSupplies = await _orderSupplyRepository.GetOrderSupplies(order.Id);
+        List<Supply> supplies = new();
+
+        foreach (var item in orderSupplies)
+        {
+            supplies.Add(await _supplyRepository.GetSupply(item.SupplyId));
+        }
+
+        supplies.ForEach(s => s.OrderSupply = null);
+
+        return new ResponseOrderObject { Status = order.Status, Payed = order.Payed, Supplies = supplies };
     }
 }

@@ -1,5 +1,6 @@
 ﻿using apiForRadBot.Data.Models;
 using apiForRadBot.Data.RequestObject;
+using apiForRadBot.Data.ResponseObject;
 
 namespace apiForRadBot.Core.Services.Interfaces;
 
@@ -20,4 +21,6 @@ public interface IBotService
     Task DeleteOrder(Guid id);
     Task<Order> ChangeOrderStatus(Order order, string status);
     Task<Order> OrderGotPayed(Order order);
+    //OrderSupply processing
+    Task<ResponseOrderObject> GetOrderSupplies(Order order);
 }

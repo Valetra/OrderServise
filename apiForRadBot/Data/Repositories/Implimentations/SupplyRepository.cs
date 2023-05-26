@@ -19,7 +19,7 @@ public class SupplyRepository : BaseRepository<Supply>, ISupplyRepository
         return await _supplies.ToListAsync();
     }
 
-    public async Task<Supply?> GetSupply(Guid id)
+    public async Task<Supply> GetSupply(Guid id)
     {
         return await _supplies.FirstOrDefaultAsync(m => m.Id == id);
     }

@@ -24,24 +24,6 @@ public class OrderSupplyRepository : BaseRepository<OrderSupply>, IOrderSupplyRe
         return orderSupplyEntity;
     }
 
-    public async Task<List<(Guid, int)>> GetOrderSupplies(Guid orderId)
-    {
-        List<(Guid, int)> result = null;
-        List<OrderSupply> orderSupplies = _orderSupplies.Where(os => os.OrderId == orderId).ToList();
-
-        var q = orderSupplies.GroupBy(x => x.OrderId)
-            .Select(x => new
-            {
-                Id = x.Key,
-                Count = x.Count()
-            })
-            .OrderByDescending(x => x.Count).ToList();
-
-        foreach (var item in q)
-        {
-            result.Add((item.Id, item.Count));
-        }
-
-        return result;
-    }
+    public async Task<List<OrderSupply>> GetOrderSupplies(Guid orderId)
+        => await _orderSupplies.Where(os => os.OrderId == orderId).ToListAsync();
 }

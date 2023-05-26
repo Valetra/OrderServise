@@ -6,5 +6,5 @@ public class ResponseOrderObject
 {
     public string Status { get; set; }
     public bool Payed { get; set; }
-    public List<Supply> Supply { get; set; }
+    public List<Supply>? Supplies { get; set; }
 }
