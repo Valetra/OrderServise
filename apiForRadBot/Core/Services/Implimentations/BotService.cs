@@ -48,16 +48,6 @@ public class BotService : IBotService
     }
     public async Task<Order> UpdateOrder(Order order) => await _orderRepository.Update(order);
     public async Task DeleteOrder(Guid id) => await _orderRepository.Delete(id);
-    public async Task<Order> ChangeOrderStatus(Order order, string status)
-    {
-        order.Status = status;
-        return await _orderRepository.Update(order);
-    }
-    public async Task<Order> OrderGotPayed(Order order)
-    {
-        order.Payed = true;
-        return await _orderRepository.Update(order);
-    }
 
     //OrderSupply processing
     public async Task<ResponseOrderObject> GetOrderSupplies(Order order)

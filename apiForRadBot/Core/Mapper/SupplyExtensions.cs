@@ -1,7 +1,5 @@
 ﻿using apiForRadBot.Data.Models;
-using apiForRadBot.Data.RequestObject;
 using apiForRadBot.Data.ResponseObject;
-using System.Collections.Generic;
 
 namespace apiForRadBot.Core.Mapper;
 
@@ -15,7 +13,6 @@ public class SupplyExtensions
 
         foreach (var supply in groupedSupplies)
         {
-
             result.Add(new ResponseSupply
             {
                 Name = supply.Key,
