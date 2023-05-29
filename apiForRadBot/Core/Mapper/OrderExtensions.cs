@@ -18,14 +18,4 @@ public static class OrderExtensions
 
         return supplies;
     }
-    //public static ResponseOrderObject ToResponseObject(Order order)
-    //{
-    //    ResponseOrderObject responseOrderObject = new ResponseOrderObject();
-
-    //    responseOrderObject.Status = order.Status;
-    //    responseOrderObject.Payed = order.Payed;
-    //    responseOrderObject.Supply = null;
-
-    //    return responseOrderObject;
-    //}
 }

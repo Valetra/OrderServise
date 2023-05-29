@@ -67,11 +67,10 @@ public class BotService : IBotService
 
         foreach (var item in orderSupplies)
         {
-            supplies.Add(await _supplyRepository.GetSupply(item.SupplyId));
+            var currentSupply = await _supplyRepository.GetSupply(item.SupplyId);
+            supplies.Add(currentSupply);
         }
 
-        supplies.ForEach(s => s.OrderSupply = null);
-
-        return new ResponseOrderObject { Status = order.Status, Payed = order.Payed, Supplies = supplies };
+        return new ResponseOrderObject { Status = order.Status, Payed = order.Payed, Supplies = SupplyExtensions.ToResponseSupplies(supplies) };
     }
 }

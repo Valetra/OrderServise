@@ -31,7 +31,7 @@ public class OrderController : ControllerBase
         return (order != null) ? Ok(order) : NotFound($"Order with id = {id}, was not found.");
     }
 
-    [HttpGet("getOrderSupplies/{id}")]
+    [HttpGet("getOrderWithSupplies/{id}")]
     public async Task<ActionResult<ResponseOrderObject>> GetOrderWithSupplies(Guid id)
     {
         var order = await _botService.GetOrder(id);
@@ -59,7 +59,6 @@ public class OrderController : ControllerBase
         if (existsOrder == null)
             return NotFound($"Order with id = {order.Id}, was not found.");
 
-        //existsOrder.Supplies = order.Supplies;
         existsOrder.Status = order.Status;
         existsOrder.Payed = order.Payed;
 
