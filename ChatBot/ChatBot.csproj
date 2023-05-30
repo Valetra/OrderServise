@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\apiForRadBot\apiForRadBot.csproj" />
+    <ProjectReference Include="..\RESTful API\RESTful API.csproj" />
   </ItemGroup>
 
 </Project>
