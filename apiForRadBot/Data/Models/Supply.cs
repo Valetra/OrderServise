@@ -9,6 +9,6 @@ public class Supply : BaseModel
 {
     public string? Name { get; set; }
     public int Price { get; set; }
-    public TimeSpan? CookingTime { get; set; }
+    public TimeSpan CookingTime { get; set; }
     public ICollection<OrderSupply>? OrderSupply { get; set; }
 }

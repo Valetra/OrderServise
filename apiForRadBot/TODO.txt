@@ -1,8 +1,0 @@
-TODO:
-	[x] Создать метод GetOrderSupplies в BotService
-
-	[ ] Воспользоваться RESTful API из RadBot`а
-	[ ] Реализовать order manager RadBot`e
-	[ ] Реализовать supply manager RadBot`e
-
-	

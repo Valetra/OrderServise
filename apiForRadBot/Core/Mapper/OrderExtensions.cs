@@ -1,7 +1,5 @@
 ﻿using apiForRadBot.Data.Models;
 using apiForRadBot.Data.RequestObject;
-using apiForRadBot.Data.ResponseObject;
-using System.Text.RegularExpressions;
 
 namespace apiForRadBot.Core.Mapper;
 
@@ -13,9 +11,8 @@ public static class OrderExtensions
 
         for (int i = 0; i < suppliesId.SuppliesId.Count; i++)
         {
-            supplies.Add(new Supply { Id = suppliesId.SuppliesId[i], Name = null, Price = 0, CookingTime = null });
+            supplies.Add(new Supply { Id = suppliesId.SuppliesId[i], Name = null, Price = 0, CookingTime = TimeSpan.Parse("00:00:00") });
         }
-
         return supplies;
     }
 }

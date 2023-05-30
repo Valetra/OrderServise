@@ -1,5 +1,6 @@
 ﻿using apiForRadBot.Core.Services.Interfaces;
 using apiForRadBot.Data.Models;
+using apiForRadBot.Data.ResponseObject;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +17,7 @@ public class SupplyController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Supply>>> GetAll()
+    public async Task<ActionResult<ResponseSupplies>> GetAll()
     {
         return Ok(await _botService.GetAllSupplies());
     }

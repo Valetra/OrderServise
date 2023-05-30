@@ -9,12 +9,12 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Telegram.Bot" Version="18.0.0" />
+    <PackageReference Include="Telegram.Bot" Version="19.0.0" />
     <PackageReference Include="Telegram.Bots.Extensions.Polling" Version="5.9.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\myLib\myLib.csproj" />
+    <ProjectReference Include="..\apiForRadBot\apiForRadBot.csproj" />
   </ItemGroup>
 
 </Project>

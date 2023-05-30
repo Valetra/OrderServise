@@ -4,8 +4,11 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using myLib;
+
 using Constants;
+using apiForRadBot.Data.Models;
+using apiForRadBot.Data.ResponseObject;
+using Newtonsoft.Json;
 
 public class RadBot
 {
@@ -97,7 +100,7 @@ public class RadBot
     {
         await _client.SendTextMessageAsync(
                         chatId: chatId,
-                        text: "Hello, let`s make an order",
+                        text: "Здравствуйте, давайте создадим заказ",
                         disableNotification: true,
                         replyMarkup: REPLY_KEYBOARD_MARKUP,
                         cancellationToken: cancellationToken);
@@ -105,26 +108,29 @@ public class RadBot
 
     private async void ShowMenu(long chatId, CancellationToken cancellationToken)
     {
-        //Инициализация меню
-        List<Supply> supplies = new List<Supply>();
+        HttpClient httpClient = new HttpClient();
 
-        Supply food = new Supply("Бургер: Рад", 380);
-        Supply drink = new Supply("Пиво: Апа", 190);
-        Supply otherFood = new Supply("Компот", 60);
+        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5132/supply");
 
-        //Добавление объектов в список меню
-        supplies.Add(food);
-        supplies.Add(drink);
-        supplies.Add(otherFood);
+        using HttpResponseMessage response = await httpClient.SendAsync(request);
 
-        foreach (var supply in supplies)
+        if (response.IsSuccessStatusCode)
         {
-            Message sentMessage = await _client.SendTextMessageAsync(
-                chatId: chatId,
-                text: $"{supply.Name} | цена = {supply.Price} ₽",
-                disableNotification: true,
-                replyMarkup: REPLY_KEYBOARD_MARKUP,
-                cancellationToken: cancellationToken);
+            string jsonResponseContent = await response.Content.ReadAsStringAsync();
+            ResponseSupplies responseObject = JsonConvert.DeserializeObject<ResponseSupplies>(jsonResponseContent);
+
+            string responseMenu = "";
+
+            foreach (var item in responseObject.responseSupplies)
+            {
+                responseMenu += $"Блюдо: {item.Name} | Цена: {item.Price}\n";
+            }
+            await _client.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: $"{responseMenu}",
+                    disableNotification: true,
+                    replyMarkup: REPLY_KEYBOARD_MARKUP,
+                    cancellationToken: cancellationToken);
         }
     }
 

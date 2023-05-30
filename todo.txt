@@ -4,10 +4,13 @@ TODO:
     TelegramAPI <-> RadBot <-> webAPI(Entity Framework + DB - PostgreSQL) <-> AdminPanelWeb
 
 
-    [ ] 1) Создать webAPI
-    [ ] 2) Привязать к webAPI - dbPostgreSQL
-    [ ] 3) Создать моделей с помощью Entity Framework: (1 ко многим)order -> supplies orders <- supply(1 ко многим).
-    [ ] 4) Настроить webAPI на взаимодействие с таблицами
+    [x] 1) Создать webAPI
+    [x] 2) Привязать к webAPI - dbPostgreSQL
+    [x] 3) Создать моделей с помощью Entity Framework: (1 ко многим)order -> orders supplies  <- supply(1 ко многим).
+    [x] 4) Настроить webAPI на взаимодействие с таблицами
     [ ] 5) Привязать RadBot`а к webAPI функцианалу
-    [ ] 6) Создать webAdminPanel для персонала заведения для изменения таблицы supply(продукт/цена/времяприготовления)
+        5.1) Создать Supply manager
+            5.1.1) Создать ResponseSupplyObject
+        5.2) Создать Order manager
+    [ ] 6) Создать webAdminPanel для заведения для изменения таблицы supply(продукт/цена/время приготовления) и order(status)
 }

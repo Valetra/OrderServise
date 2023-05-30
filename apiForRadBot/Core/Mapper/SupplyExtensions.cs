@@ -5,15 +5,15 @@ namespace apiForRadBot.Core.Mapper;
 
 public class SupplyExtensions
 {
-    public static List<ResponseSupply> ToResponseSupplies(List<Supply> supplies)
+    public static List<ResponseSupplyObject> ToResponseSupplies(List<Supply> supplies)
     {
-        List<ResponseSupply> result = new();
+        List<ResponseSupplyObject> result = new();
 
         var groupedSupplies = supplies.GroupBy(i => i.Name);
 
         foreach (var supply in groupedSupplies)
         {
-            result.Add(new ResponseSupply
+            result.Add(new ResponseSupplyObject
             {
                 Name = supply.Key,
                 Count = supply.Count(),
