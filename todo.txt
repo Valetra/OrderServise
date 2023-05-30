@@ -10,7 +10,8 @@ TODO:
     [x] 4) Настроить webAPI на взаимодействие с таблицами
     [ ] 5) Привязать RadBot`а к webAPI функцианалу
         5.1) Создать Supply manager
-            5.1.1) Создать ResponseSupplyObject
+            [x] 5.1.1) Создать ResponseSupplyObject
+            [ ] 5.1.2) Научится обрабатывать callback от нажатия кнопок
         5.2) Создать Order manager
     [ ] 6) Создать webAdminPanel для заведения для изменения таблицы supply(продукт/цена/время приготовления) и order(status)
 }

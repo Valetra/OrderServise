@@ -61,6 +61,15 @@ public class RadBot
 
         var chatId = message.Chat.Id;
 
+        //TODO: update.CallbackQuery всегда null, что-то не так
+        if (update.CallbackQuery != null)
+        {
+            BotOnCallbackQueryReceived(update.CallbackQuery, cancellationToken);
+            return;
+        }
+
+
+
         Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
         switch (messageText)
@@ -83,6 +92,21 @@ public class RadBot
         }
     }
 
+    private async Task BotOnCallbackQueryReceived(CallbackQuery callbackQuery, CancellationToken cancellationToken)
+    {
+        Console.WriteLine("Received inline keyboard callback from: {CallbackQueryId}", callbackQuery.Id);
+
+        await _client.AnswerCallbackQueryAsync(
+            callbackQueryId: callbackQuery.Id,
+            text: $"Received {callbackQuery.Data}",
+            cancellationToken: cancellationToken);
+
+        await _client.SendTextMessageAsync(
+            chatId: callbackQuery.Message!.Chat.Id,
+            text: $"Received {callbackQuery.Data}",
+            cancellationToken: cancellationToken);
+    }
+
     private Task HandlePollingErrorAsync(ITelegramBotClient _, Exception exception, CancellationToken cancellationToken)
     {
         var ErrorMessage = exception switch
@@ -100,7 +124,7 @@ public class RadBot
     {
         await _client.SendTextMessageAsync(
                         chatId: chatId,
-                        text: "Здравствуйте, давайте создадим заказ",
+                        text: "Добро пожаловать в наш чат-бот!\nПользование данным ботом происходит с помощью навигационной панели.",
                         disableNotification: true,
                         replyMarkup: REPLY_KEYBOARD_MARKUP,
                         cancellationToken: cancellationToken);
@@ -157,7 +181,6 @@ public class RadBot
 
     private async void MakeOrder(long chatId, CancellationToken cancellationToken)
     {
-
         InlineKeyboardMarkup inlineKeyboard = new(new[]
                      {
                     // Первая строка
@@ -176,7 +199,7 @@ public class RadBot
 
         await _client.SendTextMessageAsync(
             chatId: chatId,
-            text: "Выберите категорию:",
+            text: $"Выберите раздел",
             parseMode: ParseMode.MarkdownV2,
             disableNotification: true,
             replyMarkup: inlineKeyboard,

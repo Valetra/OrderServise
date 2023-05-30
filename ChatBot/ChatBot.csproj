@@ -1,21 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Telegram.Bot" Version="19.0.0" />
-    <PackageReference Include="Telegram.Bots.Extensions.Polling" Version="5.9.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+		<PackageReference Include="Telegram.Bot" Version="19.0.0" />
+		<PackageReference Include="Telegram.Bots.Extensions.Polling" Version="5.9.0">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\apiForRadBot\apiForRadBot.csproj" />
-    <ProjectReference Include="..\RESTful API\RESTful API.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\RESTful API\RESTful API.csproj" />
+	</ItemGroup>
 
 </Project>
