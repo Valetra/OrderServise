@@ -50,87 +50,87 @@ public class RadBot
     }
 
     private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
-{
-    if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
     {
-        var chatId = update.Message.Chat.Id;
-        var messageText = update.Message.Text;
-        string firstName = update.Message.From.FirstName;
-        Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-
-        switch (messageText)
+        if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
         {
-            case "/start":
-                await Start(chatId, cancellationToken);
-                break;
-            case BotMenuButtons.makeOrder:
-                await MakeOrder(chatId, cancellationToken);
-                break;
-            case BotMenuButtons.showMenu:
-                ShowMenu(chatId, cancellationToken);
-                break;
-            case BotMenuButtons.showContact:
-                ShowContact(chatId, cancellationToken);
-                break;
-            case BotMenuButtons.showLocation:
-                ShowLocation(chatId, cancellationToken);
-                break;
+            var chatId = update.Message.Chat.Id;
+            var messageText = update.Message.Text;
+            string firstName = update.Message.From.FirstName;
+            Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+
+            switch (messageText)
+            {
+                case "/start":
+                    await Start(chatId, cancellationToken);
+                    break;
+                case BotMenuButtons.makeOrder:
+                    await MakeOrder(chatId, cancellationToken);
+                    break;
+                case BotMenuButtons.showMenu:
+                    ShowMenu(chatId, cancellationToken);
+                    break;
+                case BotMenuButtons.showContact:
+                    ShowContact(chatId, cancellationToken);
+                    break;
+                case BotMenuButtons.showLocation:
+                    ShowLocation(chatId, cancellationToken);
+                    break;
+            }
+        }
+
+        if (update.CallbackQuery != null)
+        {
+            string callbackData = update.CallbackQuery.Data;
+            string actionText = "default";
+            InlineKeyboardMarkup buttons = null;
+
+            if (callbackData == "burgers")
+            {
+                actionText = "Выберите бургер";
+                buttons = InlineKeyboardButtons.burgers;
+            }
+            else if (callbackData == "beer")
+            {
+                actionText = "Выберите пиво";
+                buttons = InlineKeyboardButtons.beer;
+
+            }
+            else if (callbackData == "categories")
+            {
+                actionText = "Выберите категорию";
+                buttons = InlineKeyboardButtons.categories;
+            }
+            else if (callbackData == "drinksNA")
+            {
+                actionText = "Выберите напиток";
+                buttons = InlineKeyboardButtons.drinksNA;
+            }
+            else if (callbackData == "cancelOrder")
+            {
+                actionText = "Заказ был отменен";
+                buttons = null;
+            }
+            else
+            {
+                actionText = "Else,какая-то из кнопок не обработана!";
+                buttons = InlineKeyboardButtons.categories;
+            }
+            await CallbackAction(botClient, update, cancellationToken, actionText, buttons);
         }
     }
 
-    if (update.CallbackQuery != null)
+    private async Task<Message> CallbackAction(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken, string actionText, InlineKeyboardMarkup buttons)
     {
-        string callbackData = update.CallbackQuery.Data;
-        string actionText = "default";
-        InlineKeyboardMarkup buttons = null;
-
-        if (callbackData == "burgers")
-        {
-            actionText = "Выберите бургер";
-            buttons = InlineKeyboardButtons.burgers;
-        }
-        else if (callbackData == "beer")
-        {
-            actionText = "Выберите пиво";
-            buttons = InlineKeyboardButtons.beer;
-
-        }
-        else if (callbackData == "categories")
-        {
-            actionText = "Выберите категорию";
-            buttons = InlineKeyboardButtons.categories;
-        }
-        else if (callbackData == "drinksNA")
-        {
-            actionText = "Выберите напиток";
-            buttons = InlineKeyboardButtons.drinksNA;
-        }
-        else if (callbackData == "cancelOrder")
-        {
-            actionText = "Заказ был отменен";
-            buttons = null;
-        }
-        else
-        {
-            actionText = "Else,какая-то из кнопок не обработана!";
-            buttons = InlineKeyboardButtons.categories;
-        }
-        await CallbackAction(botClient, update, cancellationToken, actionText, buttons);
+        return await botClient.EditMessageTextAsync(
+                messageId: update.CallbackQuery.Message.MessageId,
+                chatId: update.CallbackQuery.Message.Chat.Id,
+                text: actionText,
+                replyMarkup: buttons,
+                cancellationToken: cancellationToken);
     }
-}
-
-private async Task<Message> CallbackAction(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken, string actionText, InlineKeyboardMarkup buttons)
-{
-    return await botClient.EditMessageTextAsync(
-            messageId: update.CallbackQuery.Message.MessageId,
-            chatId: update.CallbackQuery.Message.Chat.Id,
-            text: actionText,
-            replyMarkup: buttons,
-            cancellationToken: cancellationToken);
-}
 
     private Task HandlePoolingErrorAsync(ITelegramBotClient _, Exception exception, CancellationToken cancellationToken)
-   {
+    {
         var ErrorMessage = exception switch
         {
             ApiRequestException apiRequestException
