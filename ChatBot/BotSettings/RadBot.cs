@@ -67,19 +67,20 @@ public class RadBot
                     await MakeOrder(chatId, cancellationToken);
                     break;
                 case BotMenuButtons.showMenu:
-                    ShowMenu(chatId, cancellationToken);
+                    await ShowMenu(chatId, cancellationToken);
                     break;
                 case BotMenuButtons.showContact:
-                    ShowContact(chatId, cancellationToken);
+                    await ShowContact(chatId, cancellationToken);
                     break;
                 case BotMenuButtons.showLocation:
-                    ShowLocation(chatId, cancellationToken);
+                    await ShowLocation(chatId, cancellationToken);
                     break;
             }
         }
 
         if (update.CallbackQuery != null)
         {
+            //HandleCallbackQuery method
             string callbackData = update.CallbackQuery.Data;
             string actionText = "default";
             InlineKeyboardMarkup buttons = null;
@@ -152,7 +153,7 @@ public class RadBot
                         cancellationToken: cancellationToken);
     }
 
-    private async void ShowMenu(long chatId, CancellationToken cancellationToken)
+    private async Task ShowMenu(long chatId, CancellationToken cancellationToken)
     {
         HttpClient httpClient = new HttpClient();
 
@@ -180,7 +181,7 @@ public class RadBot
         }
     }
 
-    private async void ShowContact(long chatId, CancellationToken cancellationToken)
+    private async Task ShowContact(long chatId, CancellationToken cancellationToken)
     {
         await _client.SendContactAsync(
                 chatId: chatId,
@@ -190,7 +191,7 @@ public class RadBot
                 cancellationToken: cancellationToken);
     }
 
-    private async void ShowLocation(long chatId, CancellationToken cancellationToken)
+    private async Task ShowLocation(long chatId, CancellationToken cancellationToken)
     {
         await _client.SendVenueAsync(
                       chatId: chatId,
