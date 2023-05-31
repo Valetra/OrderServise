@@ -8,6 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using BotSettings;
 using Constants;
 
+
 MyPrivateData myData = new MyPrivateData();
 
 CancellationTokenSource cancellationTokenSource = new();
@@ -64,7 +65,7 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
     {
         string callbackData = update.CallbackQuery.Data;
         string actionText = "default";
-        InlineKeyboardMarkup buttons = InlineKeybordButtons.categories;
+        InlineKeyboardMarkup buttons = null;
 
         if (callbackData == "burgers")
         {
@@ -87,9 +88,14 @@ async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, Cancel
             actionText = "Выберите напиток";
             buttons = InlineKeybordButtons.drinksNA;
         }
+        else if (callbackData == "cancelOrder")
+        {
+            actionText = "Заказ был отменен";
+            buttons = null;
+        }
         else
         {
-            actionText = "Else что-то не обработано!";
+            actionText = "Else,какая-то из кнопок не обработана!";
             buttons = InlineKeybordButtons.categories;
         }
         await CallbackAction(botClient, update, cancellationToken, actionText, buttons);
