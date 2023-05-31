@@ -2,8 +2,8 @@ namespace Constants;
 
 public static class BotMenuButtons
 {
-    public const string showMenu = "Меню";
-    public const string showContact = "Наши контакты";
-    public const string showLocation = "Где мы находимся";
-    public const string makeOrder = "Сделать заказ";
+    public const string showMenu = "РњРµРЅСЋ";
+    public const string showContact = "РќР°С€Рё РєРѕРЅС‚Р°РєС‚С‹";
+    public const string showLocation = "Р“РґРµ РјС‹ РЅР°С…РѕРґРёРјСЃСЏ";
+    public const string makeOrder = "РЎРґРµР»Р°С‚СЊ Р·Р°РєР°Р·";
 }
