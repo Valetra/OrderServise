@@ -55,13 +55,19 @@ public class RadBot
         {
             var chatId = update.Message.Chat.Id;
             var messageText = update.Message.Text;
-            string firstName = update.Message.From.FirstName;
+
+            string firstName;
+            if (update.Message.From is not null)
+                firstName = update.Message.From.FirstName;
+            else
+                firstName = "Незнакомец";
+
             Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
             switch (messageText)
             {
                 case "/start":
-                    await Start(chatId, cancellationToken);
+                    await Start(firstName, chatId, cancellationToken);
                     break;
                 case BotMenuButtons.makeOrder:
                     await MakeOrder(chatId, cancellationToken);
@@ -77,57 +83,53 @@ public class RadBot
                     break;
             }
         }
-
         if (update.CallbackQuery != null)
-        {
-            //HandleCallbackQuery method
-            string callbackData = update.CallbackQuery.Data;
-            string actionText = "default";
-            InlineKeyboardMarkup buttons = null;
-
-            if (callbackData == "burgers")
-            {
-                actionText = "Выберите бургер";
-                buttons = InlineKeyboardButtons.burgers;
-            }
-            else if (callbackData == "beer")
-            {
-                actionText = "Выберите пиво";
-                buttons = InlineKeyboardButtons.beer;
-
-            }
-            else if (callbackData == "categories")
-            {
-                actionText = "Выберите категорию";
-                buttons = InlineKeyboardButtons.categories;
-            }
-            else if (callbackData == "drinksNA")
-            {
-                actionText = "Выберите напиток";
-                buttons = InlineKeyboardButtons.drinksNA;
-            }
-            else if (callbackData == "cancelOrder")
-            {
-                actionText = "Заказ был отменен";
-                buttons = null;
-            }
-            else
-            {
-                actionText = "Else,какая-то из кнопок не обработана!";
-                buttons = InlineKeyboardButtons.categories;
-            }
-            await CallbackAction(botClient, update, cancellationToken, actionText, buttons);
-        }
+            await HandleCallbackQuery(botClient, update.CallbackQuery, cancellationToken);
     }
 
-    private async Task<Message> CallbackAction(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken, string actionText, InlineKeyboardMarkup buttons)
+    private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
+    {
+        string? callbackData = callbackQuery.Data;
+        string actionText;
+        InlineKeyboardMarkup? buttons;
+
+        switch (callbackData)
+        {
+            case "burgers":
+                actionText = "Выберите бургер";
+                buttons = InlineKeyboardButtons.burgers;
+                break;
+            case "beer":
+                actionText = "Выберите пиво";
+                buttons = InlineKeyboardButtons.beer;
+                break;
+            case "drinksNA":
+                actionText = "Выберите напиток";
+                buttons = InlineKeyboardButtons.drinksNA;
+                break;
+            case "categories":
+                actionText = "Выберите категорию";
+                buttons = InlineKeyboardButtons.categories;
+                break;
+            case "cancelOrder":
+                actionText = "Заказ был отменен";
+                buttons = null;
+                break;
+            default:
+                actionText = "Else,какая-то из кнопок не обработана!";
+                buttons = InlineKeyboardButtons.categories;
+                break;
+        }
+        return await CallbackAction(botClient, callbackQuery, actionText, buttons, cancellationToken);
+    }
+    private async Task<Message> CallbackAction(ITelegramBotClient botClient, CallbackQuery callbackQuery, string actionText, InlineKeyboardMarkup? buttons, CancellationToken cancellationToken)
     {
         return await botClient.EditMessageTextAsync(
-                messageId: update.CallbackQuery.Message.MessageId,
-                chatId: update.CallbackQuery.Message.Chat.Id,
-                text: actionText,
-                replyMarkup: buttons,
-                cancellationToken: cancellationToken);
+            messageId: callbackQuery.Message.MessageId,
+            chatId: callbackQuery.Message.Chat.Id,
+            text: actionText,
+            replyMarkup: buttons,
+            cancellationToken: cancellationToken);
     }
 
     private Task HandlePoolingErrorAsync(ITelegramBotClient _, Exception exception, CancellationToken cancellationToken)
@@ -143,11 +145,11 @@ public class RadBot
         return Task.CompletedTask;
     }
 
-    private async Task Start(long chatId, CancellationToken cancellationToken)
+    private async Task Start(string firstName, long chatId, CancellationToken cancellationToken)
     {
         await _client.SendTextMessageAsync(
                         chatId: chatId,
-                        text: "Добро пожаловать в наш чат-бот!\nПользование данным ботом происходит с помощью навигационной панели.",
+                        text: $"{firstName}, добро пожаловать в наш чат-бот!\nПользование данным ботом происходит с помощью навигационной панели.",
                         disableNotification: true,
                         replyMarkup: REPLY_KEYBOARD_MARKUP,
                         cancellationToken: cancellationToken);
