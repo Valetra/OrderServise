@@ -2,7 +2,7 @@
 
 namespace BotSettings;
 
-public class InlineKeybordButtons
+public class InlineKeyboardButtons
 {
     public static InlineKeyboardMarkup categories = new(new[]
     {
