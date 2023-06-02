@@ -22,4 +22,11 @@ public interface IBotService
 
     //OrderSupply processing
     Task<ResponseOrderObject> GetOrderSupplies(Order order);
+
+    //Category processing
+    Task<IEnumerable<Category>> GetAllCategories();
+    Task<Category?> GetCategory(Guid id);
+    Task<Category> AddCategory(Category category);
+    Task<Category> UpdateCategory(Category category);
+    Task DeleteCategory(Guid id);
 }

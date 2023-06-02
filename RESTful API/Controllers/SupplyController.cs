@@ -51,6 +51,7 @@ public class SupplyController : ControllerBase
         existsSupply.Name = supply.Name;
         existsSupply.Price = supply.Price;
         existsSupply.CookingTime = supply.CookingTime;
+        existsSupply.CategoryId = supply.CategoryId;
 
         return await _botService.UpdateSupply(existsSupply);
     }

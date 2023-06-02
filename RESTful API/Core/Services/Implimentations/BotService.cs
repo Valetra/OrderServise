@@ -8,6 +8,7 @@ using apiForRadBot.Core.Mapper;
 using apiForRadBot.Data.Repositories.Implimentations;
 using apiForRadBot.Data.ResponseObject;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace apiForRadBot.Core.Services.Implimentations;
 
@@ -16,19 +17,27 @@ public class BotService : IBotService
     private readonly ISupplyRepository _supplyRepository;
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderSupplyRepository _orderSupplyRepository;
+    private readonly ICategoryReposetory _categoryRepository;
 
-    public BotService(ISupplyRepository supplyRepository, IOrderRepository orderRepository, IOrderSupplyRepository orderSupplyRepository)
+    public BotService
+    (
+        ISupplyRepository supplyRepository,
+        IOrderRepository orderRepository,
+        IOrderSupplyRepository orderSupplyRepository,
+        ICategoryReposetory categoryRepository
+    )
     {
         _supplyRepository = supplyRepository;
         _orderRepository = orderRepository;
         _orderSupplyRepository = orderSupplyRepository;
+        _categoryRepository = categoryRepository;
     }
 
     //Supply processing
     public async Task<ResponseSupplies> GetAllSupplies()
     {
         ResponseSupplies newSupplies = new();
-        newSupplies.responseSupplies = SupplyExtensions.ToResponseSupplies(await _supplyRepository.GetAllSupplies());
+        newSupplies.responseSupplies = SupplyExtensions.ToResponseSupplies(await _supplyRepository.GetAllSupplies(), await _categoryRepository.GetAll());
         return newSupplies;
     }
     public async Task<Supply?> GetSupply(Guid id) => await _supplyRepository.GetSupply(id);
@@ -59,6 +68,7 @@ public class BotService : IBotService
     {
         List<OrderSupply> orderSupplies = await _orderSupplyRepository.GetOrderSupplies(order.Id);
         List<Supply> supplies = new();
+        List<Category> categories = await _categoryRepository.GetAll();
 
         foreach (var item in orderSupplies)
         {
@@ -66,6 +76,21 @@ public class BotService : IBotService
             supplies.Add(currentSupply);
         }
 
-        return new ResponseOrderObject { Status = order.Status, Payed = order.Payed, Supplies = SupplyExtensions.ToResponseSupplies(supplies) };
+        return new ResponseOrderObject { Status = order.Status, Payed = order.Payed, Supplies = SupplyExtensions.ToResponseSupplies(supplies, categories) };
     }
+
+    //Category processing
+    public async Task<IEnumerable<Category>> GetAllCategories() => await _categoryRepository.GetAll();
+    public async Task<Category?> GetCategory(Guid id) => await _categoryRepository.Get(id);
+    public async Task<Category> AddCategory(Category category)
+    {
+        Category newCategory = new();
+        newCategory.Name = category.Name;
+
+        Category categoryEntity = await _categoryRepository.Create(newCategory);
+
+        return categoryEntity;
+    }
+    public async Task<Category> UpdateCategory(Category category) => await _categoryRepository.Update(category);
+    public async Task DeleteCategory(Guid id) => await _categoryRepository.Delete(id);
 }

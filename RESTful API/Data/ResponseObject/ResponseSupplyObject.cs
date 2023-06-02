@@ -11,4 +11,5 @@ public class ResponseSupplyObject
     public int Count { get; set; }
     public int Price { get; set; }
     public TimeSpan CookingTime { get; set; }
+    public String Category { get; set; }
 }

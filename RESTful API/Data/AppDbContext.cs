@@ -7,6 +7,7 @@ public class AppDbContext : DbContext
 {
     public DbSet<Supply> Supplies { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<Category> Categories { get; set; }
     public DbSet<OrderSupply> OrderSupply { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
