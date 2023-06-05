@@ -5,10 +5,11 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
+using Contracts;
 using Constants;
-using apiForRadBot.Data.ResponseObject;
 using BotSettings;
 using Newtonsoft.Json;
+using apiForRadBot.Data.ResponseObject;
 
 public class RadBot
 {
@@ -24,10 +25,12 @@ public class RadBot
     };
 
     private readonly TelegramBotClient _client;
+    private readonly string _apiPath;
 
-    public RadBot(string token, CancellationToken cancellationToken)
+    public RadBot(string token, CancellationToken cancellationToken, string apiPath)
     {
         _client = new TelegramBotClient(token);
+        _apiPath = apiPath;
 
         var receiverOptions = new ReceiverOptions
         {
@@ -40,6 +43,34 @@ public class RadBot
             receiverOptions,
             cancellationToken
         );
+    }
+
+    private async Task ShowMenu(long chatId, CancellationToken cancellationToken)
+    {
+        HttpClient httpClient = new HttpClient();
+
+        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, _apiPath);
+
+        using HttpResponseMessage response = await httpClient.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            string jsonResponseContent = await response.Content.ReadAsStringAsync();
+            ResponseSupplies responseObject = JsonConvert.DeserializeObject<ResponseSupplies>(jsonResponseContent);
+
+            string responseMenu = null;
+
+            foreach (var item in responseObject.responseSupplies)
+            {
+                responseMenu += $"{item.Name} \t {item.Price}₽\n";
+            }
+            await _client.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: $"{responseMenu}",
+                    disableNotification: true,
+                    replyMarkup: REPLY_KEYBOARD_MARKUP,
+                    cancellationToken: cancellationToken);
+        }
     }
 
     public async Task<string?> GetUsername()
@@ -153,34 +184,6 @@ public class RadBot
                         disableNotification: true,
                         replyMarkup: REPLY_KEYBOARD_MARKUP,
                         cancellationToken: cancellationToken);
-    }
-
-    private async Task ShowMenu(long chatId, CancellationToken cancellationToken)
-    {
-        HttpClient httpClient = new HttpClient();
-
-        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "http://localhost:5132/supply");
-
-        using HttpResponseMessage response = await httpClient.SendAsync(request);
-
-        if (response.IsSuccessStatusCode)
-        {
-            string jsonResponseContent = await response.Content.ReadAsStringAsync();
-            ResponseSupplies responseObject = JsonConvert.DeserializeObject<ResponseSupplies>(jsonResponseContent);
-
-            string responseMenu = "";
-
-            foreach (var item in responseObject.responseSupplies)
-            {
-                responseMenu += $"Блюдо: {item.Name} | Цена: {item.Price}\n";
-            }
-            await _client.SendTextMessageAsync(
-                    chatId: chatId,
-                    text: $"{responseMenu}",
-                    disableNotification: true,
-                    replyMarkup: REPLY_KEYBOARD_MARKUP,
-                    cancellationToken: cancellationToken);
-        }
     }
 
     private async Task ShowContact(long chatId, CancellationToken cancellationToken)

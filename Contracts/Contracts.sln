@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts.csproj", "{7E66E5B6-8D99-48B9-88E1-CFB55952A2FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RESTful API", "..\RESTful API\RESTful API.csproj", "{74031B25-78BD-4A5B-A108-CA4960641B48}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E66E5B6-8D99-48B9-88E1-CFB55952A2FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E66E5B6-8D99-48B9-88E1-CFB55952A2FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E66E5B6-8D99-48B9-88E1-CFB55952A2FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E66E5B6-8D99-48B9-88E1-CFB55952A2FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74031B25-78BD-4A5B-A108-CA4960641B48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74031B25-78BD-4A5B-A108-CA4960641B48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74031B25-78BD-4A5B-A108-CA4960641B48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74031B25-78BD-4A5B-A108-CA4960641B48}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6DBE6531-AB6B-4B1F-B7D5-91FFAFC27D72}
+	EndGlobalSection
+EndGlobal

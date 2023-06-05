@@ -5,7 +5,7 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatBot", "ChatBot.csproj", "{BB7846BC-DF7F-490D-8C37-9204BC9C047F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RESTful API", "..\RESTful API\RESTful API.csproj", "{241321BC-B8DE-42F1-8C5A-77E80A140DD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "..\Contracts\Contracts.csproj", "{B2EFC935-24D3-46F1-9198-4D0EF151EEC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{BB7846BC-DF7F-490D-8C37-9204BC9C047F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB7846BC-DF7F-490D-8C37-9204BC9C047F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB7846BC-DF7F-490D-8C37-9204BC9C047F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{241321BC-B8DE-42F1-8C5A-77E80A140DD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{241321BC-B8DE-42F1-8C5A-77E80A140DD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{241321BC-B8DE-42F1-8C5A-77E80A140DD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{241321BC-B8DE-42F1-8C5A-77E80A140DD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2EFC935-24D3-46F1-9198-4D0EF151EEC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2EFC935-24D3-46F1-9198-4D0EF151EEC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2EFC935-24D3-46F1-9198-4D0EF151EEC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2EFC935-24D3-46F1-9198-4D0EF151EEC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
