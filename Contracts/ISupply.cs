@@ -1,6 +1,6 @@
 ﻿namespace Contracts;
 
-public interface IResponseSupply
+public interface ISupply
 {
     string? Name { get; set; }
     int Count { get; set; }
@@ -9,7 +9,7 @@ public interface IResponseSupply
     String Category { get; set; }
 }
 
-public class ResponseSupply : IResponseSupply
+public class Supply : ISupply
 {
     public string? Name { get; set; }
     public int Count { get; set; }

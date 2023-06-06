@@ -7,7 +7,7 @@ using Telegram.Bots.Types;
 namespace ChatBot.Managers;
 public class SupplyManager
 {
-    public static async Task<List<ResponseSupply>?> GetSuppliesFromAPI(string apiPath)
+    public static async Task<List<Supply>?> GetSuppliesFromAPI(string apiPath)
     {
         string controllerName = "supply";
 
@@ -18,7 +18,7 @@ public class SupplyManager
         using HttpResponseMessage response = await httpClient.SendAsync(request);
 
         if (response.IsSuccessStatusCode)
-            return JsonConvert.DeserializeObject<List<ResponseSupply>>(await response.Content.ReadAsStringAsync());
+            return JsonConvert.DeserializeObject<List<Supply>>(await response.Content.ReadAsStringAsync());
         else
             return null;
     }

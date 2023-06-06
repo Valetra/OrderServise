@@ -9,6 +9,7 @@ using Constants;
 using BotSettings;
 using Newtonsoft.Json;
 using ChatBot.Managers;
+using System.Diagnostics.Eventing.Reader;
 
 public class RadBot
 {
@@ -46,7 +47,7 @@ public class RadBot
 
     private async Task ShowMenu(long chatId, CancellationToken cancellationToken)
     {
-        List<ResponseSupply>? supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+        List<Supply>? supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
         string? responseMenu = null;
 
         if (supplies != null)
@@ -73,6 +74,7 @@ public class RadBot
     private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
         List<Category>? categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
+        List<Supply>? supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
 
         if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
         {
@@ -93,7 +95,7 @@ public class RadBot
                     await Start(firstName, chatId, cancellationToken);
                     break;
                 case BotMenuButtons.makeOrder:
-                    await MakeOrder(chatId, cancellationToken, categories);
+                    await MakeOrder(chatId, cancellationToken, categories, supplies);
                     break;
                 case BotMenuButtons.showMenu:
                     await ShowMenu(chatId, cancellationToken);
@@ -113,39 +115,35 @@ public class RadBot
     private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
     {
         List<Category>? categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
+        List<Supply>? supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
         string? callbackData = callbackQuery.Data;
         string actionText;
         InlineKeyboardMarkup? buttons;
-        InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories);
+        InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies);
 
 
-        switch (callbackData)
+        List<String> categoryNames = categories.Select(n => n.Name).ToList();
+
+        if (callbackData == "back")
         {
-            case "burgers":
-                actionText = "Выберите бургер";
-                buttons = InlineKeyboardButtons.burgers;
-                break;
-            case "beer":
-                actionText = "Выберите пиво";
-                buttons = InlineKeyboardButtons.beer;
-                break;
-            case "drinksNA":
-                actionText = "Выберите напиток";
-                buttons = InlineKeyboardButtons.drinksNA;
-                break;
-            case "categories":
-                actionText = "Выберите категорию";
-                buttons = newButtons.GetCategoryButtons();
-                break;
-            case "cancelOrder":
-                actionText = "Заказ был отменен";
-                buttons = null;
-                break;
-            default:
-                actionText = "Else,какая-то из кнопок не обработана!";
-                buttons = newButtons.GetCategoryButtons();
-                break;
+            actionText = $"Выберите раздел";
+            buttons = newButtons.GetCategoryButtons();
         }
+        else if (callbackData == "cancel")
+        {
+            actionText = "Заказ был отменен";
+            buttons = null;
+        }
+        //else if (categoryNames.Contains(callbackData))
+        //{
+        //    //Add supply to List<Supply> method
+        //}
+        else
+        {
+            actionText = $"Выберите {callbackData}";
+            buttons = newButtons.GetCategorySuppliesButtons(callbackData);
+        }
+
         return await CallbackAction(botClient, callbackQuery, actionText, buttons, cancellationToken);
     }
     private async Task<Message> CallbackAction(ITelegramBotClient botClient, CallbackQuery callbackQuery, string actionText, InlineKeyboardMarkup? buttons, CancellationToken cancellationToken)
@@ -202,9 +200,9 @@ public class RadBot
                       cancellationToken: cancellationToken);
     }
 
-    private async Task MakeOrder(long chatId, CancellationToken cancellationToken, List<Category>? categories)
+    private async Task MakeOrder(long chatId, CancellationToken cancellationToken, List<Category>? categories, List<Supply>? supplies)
     {
-        InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories);
+        InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies);
 
         await _client.SendTextMessageAsync(
             chatId: chatId,

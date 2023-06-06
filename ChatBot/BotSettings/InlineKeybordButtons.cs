@@ -1,5 +1,6 @@
 ﻿using ChatBot.Managers;
 using Contracts;
+using System.Collections.Generic;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BotSettings;
@@ -8,21 +9,21 @@ public class InlineKeyboardButtons
 {
     private readonly string _apiPath;
     private readonly List<Category> _categories;
+    private readonly List<Supply> _supplies;
 
-    public InlineKeyboardButtons(string apiPath, List<Category> categories)
+    public InlineKeyboardButtons(string apiPath, List<Category> categories, List<Supply> supplies)
     {
         _apiPath = apiPath;
         _categories = categories;
+        _supplies = supplies;
     }
 
     public InlineKeyboardMarkup? GetCategoryButtons()
     {
-        InlineKeyboardMarkup inlineKeyboardMarkup;
-
         List<InlineKeyboardButton>? categoryButtons = new();
         List<InlineKeyboardButton>? cancelButton = new()
         {
-            InlineKeyboardButton.WithCallbackData(text: "отмена заказа", callbackData: "cancelOrder")
+            InlineKeyboardButton.WithCallbackData(text: "отмена заказа", callbackData: "cancel")
         };
 
         if (_categories != null)
@@ -31,63 +32,32 @@ public class InlineKeyboardButtons
             {
                 categoryButtons.Add(InlineKeyboardButton.WithCallbackData(text: category.Name, callbackData: category.Name));
             }
-            inlineKeyboardMarkup = new(new[]
+            return new(new[]
             {
                 categoryButtons,
                 cancelButton
             });
-            return inlineKeyboardMarkup;
         }
         else
             return null;
-
     }
-
-    public static InlineKeyboardMarkup burgers = new(new[]
+    public InlineKeyboardMarkup? GetCategorySuppliesButtons(string category)
     {
-        // Первая строка
-        new []
+        List<InlineKeyboardButton>? subcategoryButtons = new();
+        List<InlineKeyboardButton>? backButton = new()
         {
-            InlineKeyboardButton.WithCallbackData(text: "Бургер 1", callbackData: "burger1"),
-            InlineKeyboardButton.WithCallbackData(text: "Бургер 2", callbackData: "burger2"),
-            InlineKeyboardButton.WithCallbackData(text: "Бургер 3", callbackData: "burger3"),
-        },
-        // Вторая строка
-        new []
-        {
-            InlineKeyboardButton.WithCallbackData(text: "назад", callbackData: "categories"),
-        },
-    });
+            InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: "back")
+        };
 
-    public static InlineKeyboardMarkup beer = new(new[]
-    {
-        // Первая строка
-        new []
+        foreach (var supply in _supplies)
         {
-            InlineKeyboardButton.WithCallbackData(text: "Пиво 1", callbackData: "beer1"),
-            InlineKeyboardButton.WithCallbackData(text: "Пиво 2", callbackData: "beer2"),
-            InlineKeyboardButton.WithCallbackData(text: "Пиво 3", callbackData: "beer3"),
-        },
-        // Вторая строка
-        new []
-        {
-            InlineKeyboardButton.WithCallbackData(text: "назад", callbackData: "categories"),
-        },
-    });
-
-    public static InlineKeyboardMarkup drinksNA = new(new[]
-    {
-        // Первая строка
-        new []
-        {
-            InlineKeyboardButton.WithCallbackData(text: "Кофе", callbackData: "сoffe"),
-            InlineKeyboardButton.WithCallbackData(text: "Компот", callbackData: "compote"),
-            InlineKeyboardButton.WithCallbackData(text: "Чай", callbackData: "tea"),
-        },
-        // Вторая строка
-        new []
-        {
-            InlineKeyboardButton.WithCallbackData(text: "назад", callbackData: "categories"),
-        },
-    });
+            if (supply.Category == category)
+                subcategoryButtons.Add(InlineKeyboardButton.WithCallbackData(text: supply.Name, callbackData: supply.Name));
+        }
+        return new(new[]
+            {
+                subcategoryButtons,
+                backButton
+            });
+    }
 }

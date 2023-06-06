@@ -1,5 +1,7 @@
 ﻿namespace Contracts;
 
-internal interface IOrder
+public interface IOrder
 {
+
 }
+
