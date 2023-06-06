@@ -17,7 +17,7 @@ public class SupplyController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ResponseSupplies>> GetAll()
+    public async Task<ActionResult<List<ResponseSupplyObject>>> GetAll()
     {
         return Ok(await _botService.GetAllSupplies());
     }

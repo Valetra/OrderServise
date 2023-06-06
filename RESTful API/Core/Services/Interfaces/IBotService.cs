@@ -7,7 +7,7 @@ namespace apiForRadBot.Core.Services.Interfaces;
 public interface IBotService
 {
     //Supply processing
-    Task<ResponseSupplies> GetAllSupplies();
+    Task<List<ResponseSupplyObject>> GetAllSupplies();
     Task<Supply> GetSupply(Guid id);
     Task<Supply> AddSupply(Supply supply);
     Task<Supply> UpdateSupply(Supply supply);

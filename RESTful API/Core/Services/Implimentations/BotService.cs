@@ -34,11 +34,9 @@ public class BotService : IBotService
     }
 
     //Supply processing
-    public async Task<ResponseSupplies> GetAllSupplies()
+    public async Task<List<ResponseSupplyObject>> GetAllSupplies()
     {
-        ResponseSupplies newSupplies = new();
-        newSupplies.responseSupplies = SupplyExtensions.ToResponseSupplies(await _supplyRepository.GetAllSupplies(), await _categoryRepository.GetAll());
-        return newSupplies;
+        return SupplyExtensions.ToResponseSupplies(await _supplyRepository.GetAllSupplies(), await _categoryRepository.GetAll());
     }
     public async Task<Supply?> GetSupply(Guid id) => await _supplyRepository.GetSupply(id);
     public async Task<Supply> AddSupply(Supply supply) => await _supplyRepository.CreateSupply(supply);

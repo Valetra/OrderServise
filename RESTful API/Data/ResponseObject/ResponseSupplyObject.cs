@@ -1,10 +1,5 @@
 ﻿namespace apiForRadBot.Data.ResponseObject;
 
-public class ResponseSupplies
-{
-    public List<ResponseSupplyObject> responseSupplies { get; set; }
-}
-
 public class ResponseSupplyObject
 {
     public string? Name { get; set; }
