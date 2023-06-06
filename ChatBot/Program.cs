@@ -4,7 +4,7 @@ MyPrivateData myData = new MyPrivateData();
 
 CancellationTokenSource cancellationTokenSource = new();
 
-string apiPath = "http://localhost:5132/supply";
+string apiPath = "http://localhost:5132/";
 
 RadBot radBot = new(myData.TelegramBotToken, cancellationTokenSource.Token, apiPath);
 

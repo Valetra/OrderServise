@@ -9,7 +9,6 @@ using Contracts;
 using Constants;
 using BotSettings;
 using Newtonsoft.Json;
-using apiForRadBot.Data.ResponseObject;
 
 public class RadBot
 {
@@ -47,20 +46,23 @@ public class RadBot
 
     private async Task ShowMenu(long chatId, CancellationToken cancellationToken)
     {
+        string controllerName = "supply";
+
         HttpClient httpClient = new HttpClient();
 
-        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, _apiPath);
+        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, _apiPath + controllerName);
 
         using HttpResponseMessage response = await httpClient.SendAsync(request);
 
         if (response.IsSuccessStatusCode)
         {
             string jsonResponseContent = await response.Content.ReadAsStringAsync();
-            ResponseSupplies responseObject = JsonConvert.DeserializeObject<ResponseSupplies>(jsonResponseContent);
+
+            List<ResponseSupply> supplies = JsonConvert.DeserializeObject<List<ResponseSupply>>(jsonResponseContent);
 
             string responseMenu = null;
 
-            foreach (var item in responseObject.responseSupplies)
+            foreach (var item in supplies)
             {
                 responseMenu += $"{item.Name} \t {item.Price}₽\n";
             }
