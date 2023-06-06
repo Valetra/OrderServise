@@ -21,4 +21,8 @@
 	  <ProjectReference Include="..\Contracts\Contracts.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="OrderManager\" />
+	</ItemGroup>
+
 </Project>
