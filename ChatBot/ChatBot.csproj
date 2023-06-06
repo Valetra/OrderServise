@@ -18,11 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Contracts\Contracts.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="OrderManager\" />
+		<ProjectReference Include="..\Contracts\Contracts.csproj" />
 	</ItemGroup>
 
 </Project>

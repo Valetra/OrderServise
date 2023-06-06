@@ -1,8 +1,13 @@
-﻿using apiForRadBot.Data.Models;
+﻿namespace Contracts;
 
-namespace Contracts;
-
-internal interface ICategory
+public interface ICategory
 {
-    Category Category { get; set; }
+    Guid Id { get; set; }
+    string Name { get; set; }
+}
+
+public class Category : ICategory
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; }
 }

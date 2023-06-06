@@ -4,8 +4,8 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using Telegram.Bots.Types;
 
-namespace ChatBot.SupplyManager;
-public class SupplyHandler
+namespace ChatBot.Managers;
+public class SupplyManager
 {
     public static async Task<List<ResponseSupply>?> GetSuppliesFromAPI(string apiPath)
     {

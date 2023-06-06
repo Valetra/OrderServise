@@ -4,12 +4,11 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-
-using ChatBot.SupplyManager;
 using Contracts;
 using Constants;
 using BotSettings;
 using Newtonsoft.Json;
+using ChatBot.Managers;
 
 public class RadBot
 {
@@ -47,7 +46,7 @@ public class RadBot
 
     private async Task ShowMenu(long chatId, CancellationToken cancellationToken)
     {
-        List<ResponseSupply>? supplies = await SupplyHandler.GetSuppliesFromAPI(_apiPath);
+        List<ResponseSupply>? supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
         string? responseMenu = null;
 
         if (supplies != null)
@@ -73,6 +72,8 @@ public class RadBot
 
     private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
+        List<Category>? categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
+
         if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
         {
             var chatId = update.Message.Chat.Id;
@@ -92,7 +93,7 @@ public class RadBot
                     await Start(firstName, chatId, cancellationToken);
                     break;
                 case BotMenuButtons.makeOrder:
-                    await MakeOrder(chatId, cancellationToken);
+                    await MakeOrder(chatId, cancellationToken, categories);
                     break;
                 case BotMenuButtons.showMenu:
                     await ShowMenu(chatId, cancellationToken);
@@ -111,9 +112,12 @@ public class RadBot
 
     private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
     {
+        List<Category>? categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
         string? callbackData = callbackQuery.Data;
         string actionText;
         InlineKeyboardMarkup? buttons;
+        InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories);
+
 
         switch (callbackData)
         {
@@ -131,7 +135,7 @@ public class RadBot
                 break;
             case "categories":
                 actionText = "Выберите категорию";
-                buttons = InlineKeyboardButtons.categories;
+                buttons = newButtons.GetCategoryButtons();
                 break;
             case "cancelOrder":
                 actionText = "Заказ был отменен";
@@ -139,7 +143,7 @@ public class RadBot
                 break;
             default:
                 actionText = "Else,какая-то из кнопок не обработана!";
-                buttons = InlineKeyboardButtons.categories;
+                buttons = newButtons.GetCategoryButtons();
                 break;
         }
         return await CallbackAction(botClient, callbackQuery, actionText, buttons, cancellationToken);
@@ -198,14 +202,16 @@ public class RadBot
                       cancellationToken: cancellationToken);
     }
 
-    private async Task MakeOrder(long chatId, CancellationToken cancellationToken)
+    private async Task MakeOrder(long chatId, CancellationToken cancellationToken, List<Category>? categories)
     {
+        InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories);
+
         await _client.SendTextMessageAsync(
             chatId: chatId,
             text: $"Выберите раздел",
             parseMode: ParseMode.MarkdownV2,
             disableNotification: true,
-            replyMarkup: InlineKeyboardButtons.categories,
+            replyMarkup: newButtons.GetCategoryButtons(),
             cancellationToken: cancellationToken);
     }
 }

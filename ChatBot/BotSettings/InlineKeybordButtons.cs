@@ -1,24 +1,47 @@
-﻿using Telegram.Bot.Types.ReplyMarkups;
+﻿using ChatBot.Managers;
+using Contracts;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BotSettings;
 
 public class InlineKeyboardButtons
 {
-    public static InlineKeyboardMarkup categories = new(new[]
+    private readonly string _apiPath;
+    private readonly List<Category> _categories;
+
+    public InlineKeyboardButtons(string apiPath, List<Category> categories)
     {
-        // Первая строка
-        new []
+        _apiPath = apiPath;
+        _categories = categories;
+    }
+
+    public InlineKeyboardMarkup? GetCategoryButtons()
+    {
+        InlineKeyboardMarkup inlineKeyboardMarkup;
+
+        List<InlineKeyboardButton>? categoryButtons = new();
+        List<InlineKeyboardButton>? cancelButton = new()
         {
-            InlineKeyboardButton.WithCallbackData(text: "Бургеры", callbackData: "burgers"),
-            InlineKeyboardButton.WithCallbackData(text: "Пиво", callbackData: "beer"),
-            InlineKeyboardButton.WithCallbackData(text: "Напитки б/а", callbackData: "drinksNA"),
-        },
-        // Вторая строка
-        new []
+            InlineKeyboardButton.WithCallbackData(text: "отмена заказа", callbackData: "cancelOrder")
+        };
+
+        if (_categories != null)
         {
-            InlineKeyboardButton.WithCallbackData(text: "отмена заказа", callbackData: "cancelOrder"),
-        },
-    });
+            foreach (var category in _categories)
+            {
+                categoryButtons.Add(InlineKeyboardButton.WithCallbackData(text: category.Name, callbackData: category.Name));
+            }
+            inlineKeyboardMarkup = new(new[]
+            {
+                categoryButtons,
+                cancelButton
+            });
+            return inlineKeyboardMarkup;
+        }
+        else
+            return null;
+
+    }
 
     public static InlineKeyboardMarkup burgers = new(new[]
     {
