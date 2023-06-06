@@ -21,6 +21,10 @@ public class InlineKeyboardButtons
     public InlineKeyboardMarkup? GetCategoryButtons()
     {
         List<InlineKeyboardButton>? categoryButtons = new();
+        List<InlineKeyboardButton>? AcceptOrderButton = new()
+        {
+            InlineKeyboardButton.WithCallbackData(text: "Заказ принят", callbackData: "acceptOrder")
+        };
         List<InlineKeyboardButton>? cancelButton = new()
         {
             InlineKeyboardButton.WithCallbackData(text: "отмена заказа", callbackData: "cancel")
@@ -35,6 +39,7 @@ public class InlineKeyboardButtons
             return new(new[]
             {
                 categoryButtons,
+                AcceptOrderButton,
                 cancelButton
             });
         }
@@ -44,6 +49,10 @@ public class InlineKeyboardButtons
     public InlineKeyboardMarkup? GetCategorySuppliesButtons(string category)
     {
         List<InlineKeyboardButton>? subcategoryButtons = new();
+        List<InlineKeyboardButton>? AcceptOrderButton = new()
+        {
+            InlineKeyboardButton.WithCallbackData(text: "Заказ принят", callbackData: "acceptOrder")
+        };
         List<InlineKeyboardButton>? backButton = new()
         {
             InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: "back")
@@ -57,7 +66,8 @@ public class InlineKeyboardButtons
         return new(new[]
             {
                 subcategoryButtons,
-                backButton
+                backButton,
+                AcceptOrderButton,
             });
     }
 }

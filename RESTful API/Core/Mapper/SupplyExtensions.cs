@@ -18,6 +18,7 @@ public class SupplyExtensions
 
             result.Add(new ResponseSupplyObject
             {
+                Id = supplies.FirstOrDefault(s => s.Name == supply.Key).Id,
                 Name = supply.Key,
                 Count = supply.Count(),
                 Price = supplies.FirstOrDefault(s => s.Name == supply.Key).Price,

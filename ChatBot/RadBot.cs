@@ -10,6 +10,8 @@ using BotSettings;
 using Newtonsoft.Json;
 using ChatBot.Managers;
 using System.Diagnostics.Eventing.Reader;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using apiForRadBot.Data.ResponseObject;
 
 public class RadBot
 {
@@ -26,11 +28,15 @@ public class RadBot
 
     private readonly TelegramBotClient _client;
     private readonly string _apiPath;
-
+    private Order _order;
     public RadBot(string token, CancellationToken cancellationToken, string apiPath)
     {
         _client = new TelegramBotClient(token);
         _apiPath = apiPath;
+
+        _order = new();
+        _order.SuppliesId = new();
+        _order.Supplies = new();
 
         var receiverOptions = new ReceiverOptions
         {
@@ -75,6 +81,8 @@ public class RadBot
     {
         List<Category>? categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
         List<Supply>? supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+
+
 
         if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
         {
@@ -122,7 +130,7 @@ public class RadBot
         InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies);
 
 
-        List<String> categoryNames = categories.Select(n => n.Name).ToList();
+        List<String> suppliesNames = supplies.Select(n => n.Name).ToList();
 
         if (callbackData == "back")
         {
@@ -134,10 +142,37 @@ public class RadBot
             actionText = "Заказ был отменен";
             buttons = null;
         }
-        //else if (categoryNames.Contains(callbackData))
-        //{
-        //    //Add supply to List<Supply> method
-        //}
+        else if (suppliesNames.Contains(callbackData))
+        {
+            _order.SuppliesId = await AddSupplyToOrder(_order, callbackData, supplies);
+            actionText = $"Выберите раздел";
+            buttons = newButtons.GetCategoryButtons();
+        }
+        else if (callbackData == "acceptOrder")
+        {
+            if (await OrderManager.PostOrderToAPI(_apiPath, _order))
+            {
+                var groupedSupplies = _order.Supplies.GroupBy(i => i.Name);
+                string suppliesInOrder = "";
+
+                foreach (var supply in groupedSupplies)
+                {
+                    suppliesInOrder += $"{supply.Key} - {supply.Count()}шт.\n";
+                }
+
+
+                actionText = $"Ваш заказ:\n\n{suppliesInOrder}";
+                buttons = null;
+                _order = new();
+                _order.SuppliesId = new();
+                _order.Supplies = new();
+            }
+            else
+            {
+                actionText = "заказ пуст";
+                buttons = newButtons.GetCategoryButtons();
+            }
+        }
         else
         {
             actionText = $"Выберите {callbackData}";
@@ -146,6 +181,20 @@ public class RadBot
 
         return await CallbackAction(botClient, callbackQuery, actionText, buttons, cancellationToken);
     }
+
+    private async Task<List<Guid>> AddSupplyToOrder(Order order, string supplyName, List<Supply> supplies)
+    {
+        List<Guid> currentSuppliesId = order.SuppliesId;
+
+        Supply supply = supplies.Where(s => s.Name == supplyName).FirstOrDefault();
+
+        order.Supplies.Add(supply);
+
+        currentSuppliesId.Add(supply.Id);
+
+        return currentSuppliesId;
+    }
+
     private async Task<Message> CallbackAction(ITelegramBotClient botClient, CallbackQuery callbackQuery, string actionText, InlineKeyboardMarkup? buttons, CancellationToken cancellationToken)
     {
         return await botClient.EditMessageTextAsync(
