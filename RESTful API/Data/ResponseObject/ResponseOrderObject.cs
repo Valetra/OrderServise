@@ -1,7 +1,4 @@
-﻿using apiForRadBot.Data.Models;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-
-namespace apiForRadBot.Data.ResponseObject;
+﻿namespace apiForRadBot.Data.ResponseObject;
 
 public class ResponseOrderObject
 {

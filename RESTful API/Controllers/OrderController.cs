@@ -1,9 +1,7 @@
 ﻿using apiForRadBot.Core.Services.Interfaces;
 using apiForRadBot.Data.Models;
 using apiForRadBot.Data.RequestObject;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using apiForRadBot.Core.Mapper;
 using apiForRadBot.Data.ResponseObject;
 
 namespace apiForRadBot.Controllers;
@@ -36,9 +34,14 @@ public class OrderController : ControllerBase
     {
         var order = await _botService.GetOrder(id);
 
+        if (order is null)
+        {
+            return NotFound($"Order with id = {id}, was not found.");
+        }
+
         var responseOrderObject = await _botService.GetOrderSupplies(order);
 
-        return (responseOrderObject != null) ? Ok(responseOrderObject) : NotFound($"Order with id = {id}, was not found.");
+        return Ok(responseOrderObject);
     }
 
     [HttpPost]

@@ -7,11 +7,8 @@ using Telegram.Bot.Types.ReplyMarkups;
 using Contracts;
 using Constants;
 using BotSettings;
-using Newtonsoft.Json;
 using ChatBot.Managers;
-using System.Diagnostics.Eventing.Reader;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using apiForRadBot.Data.ResponseObject;
+using Models;
 
 public class RadBot
 {
@@ -28,15 +25,11 @@ public class RadBot
 
     private readonly TelegramBotClient _client;
     private readonly string _apiPath;
-    private Order _order;
+    private Order _order = new();
     public RadBot(string token, CancellationToken cancellationToken, string apiPath)
     {
         _client = new TelegramBotClient(token);
         _apiPath = apiPath;
-
-        _order = new();
-        _order.SuppliesId = new();
-        _order.Supplies = new();
 
         var receiverOptions = new ReceiverOptions
         {
@@ -53,7 +46,7 @@ public class RadBot
 
     private async Task ShowMenu(long chatId, CancellationToken cancellationToken)
     {
-        List<Supply>? supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+        List<ISupply> supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
         string? responseMenu = null;
 
         if (supplies != null)
@@ -79,8 +72,8 @@ public class RadBot
 
     private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        List<Category>? categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
-        List<Supply>? supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+        List<ICategory> categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
+        List<ISupply> supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
 
 
 
@@ -122,15 +115,21 @@ public class RadBot
 
     private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
     {
-        List<Category>? categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
-        List<Supply>? supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+        List<ICategory> categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
+        List<ISupply> supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
         string? callbackData = callbackQuery.Data;
-        string actionText;
-        InlineKeyboardMarkup? buttons;
+        string actionText = "";
+        InlineKeyboardMarkup? buttons = null;
         InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies);
 
 
-        List<String> suppliesNames = supplies.Select(n => n.Name).ToList();
+        List<Guid> supplyIds = supplies.Select(n => n.Id).ToList();
+        List<Guid> categoryIds = categories.Select(c => c.Id).ToList();
+
+        if (callbackData is null)
+        {
+            throw new ArgumentNullException("callbackData is null");
+        }
 
         if (callbackData == "back")
         {
@@ -142,15 +141,9 @@ public class RadBot
             actionText = "Заказ был отменен";
             buttons = null;
         }
-        else if (suppliesNames.Contains(callbackData))
-        {
-            _order.SuppliesId = await AddSupplyToOrder(_order, callbackData, supplies);
-            actionText = $"Выберите раздел";
-            buttons = newButtons.GetCategoryButtons();
-        }
         else if (callbackData == "acceptOrder")
         {
-            if (_order.Supplies.Count == 0)
+            if (!_order.SuppliesId.Any())
             {
                 actionText = "заказ пуст";
                 buttons = newButtons.GetCategoryButtons();
@@ -159,39 +152,38 @@ public class RadBot
             {
                 await OrderManager.PostOrderToAPI(_apiPath, _order);
 
-                var groupedSupplies = _order.Supplies.GroupBy(i => i.Name);
+                var groupedSupplies = _order.SuppliesId.GroupBy(id => id);
                 string suppliesInOrder = "";
 
-                foreach (var supply in groupedSupplies)
+                foreach (var supplyGroup in groupedSupplies)
                 {
-                    suppliesInOrder += $"{supply.Key} - {supply.Count()}шт.\n";
+                    string name = supplies.FirstOrDefault(s => s.Id == supplyGroup.Key)?.Name ?? "";
+                    suppliesInOrder += $"{name} - {supplyGroup.Count()} шт.\n";
                 }
                 actionText = $"Ваш заказ:\n\n{suppliesInOrder}";
                 buttons = null;
                 _order = new();
-                _order.SuppliesId = new();
-                _order.Supplies = new();
             }
         }
         else
         {
-            actionText = $"Выберите {callbackData}";
-            buttons = newButtons.GetCategorySuppliesButtons(callbackData);
+            Guid callbackDataGuid = new(callbackData);
+
+            if (categoryIds.Contains(callbackDataGuid))
+            {
+                string categoryName = categories.First(c => c.Id == callbackDataGuid).Name;
+                actionText = $"Выберите {categoryName}";
+                buttons = newButtons.GetCategorySuppliesButtons(callbackDataGuid);
+            }
+            else if (supplyIds.Contains(callbackDataGuid))
+            {
+                _order.SuppliesId.Add(callbackDataGuid);
+                actionText = $"Выберите раздел";
+                buttons = newButtons.GetCategoryButtons();
+            }
         }
+
         return await CallbackAction(botClient, callbackQuery, actionText, buttons, cancellationToken);
-    }
-
-    private async Task<List<Guid>> AddSupplyToOrder(Order order, string supplyName, List<Supply> supplies)
-    {
-        List<Guid> currentSuppliesId = order.SuppliesId;
-
-        Supply supply = supplies.Where(s => s.Name == supplyName).FirstOrDefault();
-
-        order.Supplies.Add(supply);
-
-        currentSuppliesId.Add(supply.Id);
-
-        return currentSuppliesId;
     }
 
     private async Task<Message> CallbackAction(ITelegramBotClient botClient, CallbackQuery callbackQuery, string actionText, InlineKeyboardMarkup? buttons, CancellationToken cancellationToken)
@@ -248,7 +240,7 @@ public class RadBot
                 cancellationToken: cancellationToken);
     }
 
-    private async Task MakeOrder(long chatId, CancellationToken cancellationToken, List<Category>? categories, List<Supply>? supplies)
+    private async Task MakeOrder(long chatId, CancellationToken cancellationToken, List<ICategory> categories, List<ISupply> supplies)
     {
         InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies);
 

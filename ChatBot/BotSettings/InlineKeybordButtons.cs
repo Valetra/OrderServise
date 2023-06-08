@@ -1,6 +1,4 @@
-﻿using ChatBot.Managers;
-using Contracts;
-using System.Collections.Generic;
+﻿using Contracts;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BotSettings;
@@ -8,66 +6,59 @@ namespace BotSettings;
 public class InlineKeyboardButtons
 {
     private readonly string _apiPath;
-    private readonly List<Category> _categories;
-    private readonly List<Supply> _supplies;
+    private readonly List<ICategory> _categories;
+    private readonly List<ISupply> _supplies;
 
-    public InlineKeyboardButtons(string apiPath, List<Category> categories, List<Supply> supplies)
+    public InlineKeyboardButtons(string apiPath, List<ICategory> categories, List<ISupply> supplies)
     {
         _apiPath = apiPath;
         _categories = categories;
         _supplies = supplies;
     }
 
-    public InlineKeyboardMarkup? GetCategoryButtons()
+    public InlineKeyboardMarkup GetCategoryButtons()
     {
-        List<InlineKeyboardButton>? categoryButtons = new();
-        List<InlineKeyboardButton>? AcceptOrderButton = new()
+        List<InlineKeyboardButton> categoryButtons = _categories
+            .Select(c => InlineKeyboardButton.WithCallbackData(text: c.Name, callbackData: c.Id.ToString()))
+            .ToList();
+
+        List<InlineKeyboardButton> AcceptOrderButton = new()
         {
             InlineKeyboardButton.WithCallbackData(text: "Заказ принят", callbackData: "acceptOrder")
         };
-        List<InlineKeyboardButton>? cancelButton = new()
+        List<InlineKeyboardButton> cancelButton = new()
         {
             InlineKeyboardButton.WithCallbackData(text: "отмена заказа", callbackData: "cancel")
         };
 
-        if (_categories != null)
+        return new(new[]
         {
-            foreach (var category in _categories)
-            {
-                categoryButtons.Add(InlineKeyboardButton.WithCallbackData(text: category.Name, callbackData: category.Name));
-            }
-            return new(new[]
-            {
-                categoryButtons,
-                AcceptOrderButton,
-                cancelButton
-            });
-        }
-        else
-            return null;
+            categoryButtons,
+            AcceptOrderButton,
+            cancelButton
+        });
     }
-    public InlineKeyboardMarkup? GetCategorySuppliesButtons(string category)
+    public InlineKeyboardMarkup GetCategorySuppliesButtons(Guid categoryId)
     {
-        List<InlineKeyboardButton>? subcategoryButtons = new();
-        List<InlineKeyboardButton>? AcceptOrderButton = new()
+        List<InlineKeyboardButton> subcategoryButtons = _supplies
+            .Where(s => s.CategoryId == categoryId)
+            .Select(s => InlineKeyboardButton.WithCallbackData(text: s.Name, callbackData: s.Id.ToString()))
+            .ToList();
+
+        List<InlineKeyboardButton> AcceptOrderButton = new()
         {
             InlineKeyboardButton.WithCallbackData(text: "Заказ принят", callbackData: "acceptOrder")
         };
-        List<InlineKeyboardButton>? backButton = new()
+        List<InlineKeyboardButton> backButton = new()
         {
             InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: "back")
         };
 
-        foreach (var supply in _supplies)
-        {
-            if (supply.Category == category)
-                subcategoryButtons.Add(InlineKeyboardButton.WithCallbackData(text: supply.Name, callbackData: supply.Name));
-        }
         return new(new[]
-            {
-                subcategoryButtons,
-                backButton,
-                AcceptOrderButton,
-            });
+        {
+            subcategoryButtons,
+            backButton,
+            AcceptOrderButton,
+        });
     }
 }

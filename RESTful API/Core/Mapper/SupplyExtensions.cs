@@ -1,5 +1,6 @@
 ﻿using apiForRadBot.Data.Models;
 using apiForRadBot.Data.ResponseObject;
+using Contracts;
 
 namespace apiForRadBot.Core.Mapper;
 
@@ -9,21 +10,20 @@ public class SupplyExtensions
     {
         List<ResponseSupplyObject> result = new();
 
-        var groupedSupplies = supplies.GroupBy(i => i.Name);
-        string categoryName;
+        var groupedSupplies = supplies.GroupBy(s => s.Id);
 
-        foreach (var supply in groupedSupplies)
+        foreach (var supplyGroup in groupedSupplies)
         {
-            categoryName = categories.FirstOrDefault(c => c.Id == supplies.FirstOrDefault(s => s.Name == supply.Key).CategoryId).Name;
+            Supply supply = supplyGroup.First();
 
             result.Add(new ResponseSupplyObject
             {
-                Id = supplies.FirstOrDefault(s => s.Name == supply.Key).Id,
-                Name = supply.Key,
-                Count = supply.Count(),
-                Price = supplies.FirstOrDefault(s => s.Name == supply.Key).Price,
-                CookingTime = supplies.FirstOrDefault(s => s.Name == supply.Key).CookingTime,
-                Category = categoryName
+                Id = supply.Id,
+                Name = supply.Name,
+                Count = supplyGroup.Count(),
+                Price = supply.Price,
+                CookingTime = supply.CookingTime,
+                CategoryId = supply.CategoryId
             });
         }
         return result;

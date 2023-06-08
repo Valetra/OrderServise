@@ -8,7 +8,7 @@ public interface IBotService
 {
     //Supply processing
     Task<List<ResponseSupplyObject>> GetAllSupplies();
-    Task<Supply> GetSupply(Guid id);
+    Task<Supply?> GetSupply(Guid id);
     Task<Supply> AddSupply(Supply supply);
     Task<Supply> UpdateSupply(Supply supply);
     Task DeleteSupply(Guid id);

@@ -1,6 +1,9 @@
 ﻿using apiForRadBot.Core.Services.Interfaces;
 using apiForRadBot.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using apiForRadBot.Data.ResponseObject;
+using apiForRadBot.Data.RequestObject;
+using apiForRadBot.Core.Mapper;
 
 namespace apiForRadBot.Data;
 
@@ -15,37 +18,37 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Category>>> GetAll()
+    public async Task<ActionResult<IEnumerable<ResponseCategoryObject>>> GetAll()
     {
         return Ok(await _botService.GetAllCategories());
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Category>> GetCategory(Guid id)
+    public async Task<ActionResult<ResponseCategoryObject>> GetCategory(Guid id)
     {
         var category = await _botService.GetCategory(id);
         return (category != null) ? Ok(category) : NotFound($"Category with id = {id}, was not found.");
     }
 
     [HttpPost]
-    public async Task<ActionResult<Category>> PostCategory(Category Category)
+    public async Task<ActionResult<ResponseCategoryObject>> PostCategory(PostCategoryObject postCategoryObject)
     {
-        Category categoryEntity = new();
-
-        categoryEntity = await _botService.AddCategory(Category);
+        Category categoryEntity = await _botService.AddCategory(postCategoryObject.ToCategory());
 
         return CreatedAtAction(nameof(GetCategory), new { id = categoryEntity.Id }, categoryEntity);
     }
 
-    [HttpPut("{categoryId}")]
-    public async Task<ActionResult<Category>> PutCategory(String categoryName, Guid categoryId)
+    [HttpPut]
+    public async Task<ActionResult<ResponseCategoryObject>> PutCategory(PutCategoryObject putCategoryObject)
     {
-        Category? existsCategory = await _botService.GetCategory(categoryId);
+        Category category = putCategoryObject.ToCategory();
+
+        Category? existsCategory = await _botService.GetCategory(category.Id);
 
         if (existsCategory == null)
-            return NotFound($"Category with id = {categoryId}, was not found.");
+            return NotFound($"Category with id = {category.Id}, was not found.");
 
-        existsCategory.Name = categoryName;
+        existsCategory.Name = category.Name;
 
         return Ok(await _botService.UpdateCategory(existsCategory));
     }

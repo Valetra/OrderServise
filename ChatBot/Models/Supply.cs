@@ -1,11 +1,11 @@
-﻿using Contracts;
+using Contracts;
 
-namespace apiForRadBot.Data.ResponseObject;
+namespace Models;
 
-public class ResponseSupplyObject : ISupply
+public class Supply : ISupply
 {
     public Guid Id { get; init; }
-    public string Name { get; init; } = "";
+    public string Name { get; init; }
     public int Count { get; init; }
     public int Price { get; init; }
     public TimeSpan CookingTime { get; init; }

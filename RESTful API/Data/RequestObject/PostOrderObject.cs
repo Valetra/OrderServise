@@ -2,5 +2,5 @@
 
 public class PostOrderObject
 {
-    public List<Guid>? SuppliesId { get; set; }
+    public List<Guid> SuppliesId { get; init; }
 }

@@ -1,14 +1,9 @@
 ﻿using apiForRadBot.Core.Services.Interfaces;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using apiForRadBot.Data.Models;
 using apiForRadBot.Data.Repositories.Interfaces;
 using apiForRadBot.Data.RequestObject;
 using apiForRadBot.Core.Mapper;
-using apiForRadBot.Data.Repositories.Implimentations;
 using apiForRadBot.Data.ResponseObject;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace apiForRadBot.Core.Services.Implimentations;
 
@@ -71,10 +66,18 @@ public class BotService : IBotService
         foreach (var item in orderSupplies)
         {
             var currentSupply = await _supplyRepository.GetSupply(item.SupplyId);
-            supplies.Add(currentSupply);
+            if (currentSupply is not null)
+            {
+                supplies.Add(currentSupply);
+            }
         }
 
-        return new ResponseOrderObject { Status = order.Status, Payed = order.Payed, Supplies = SupplyExtensions.ToResponseSupplies(supplies, categories) };
+        return new ResponseOrderObject
+        {
+            Status = order.Status,
+            Payed = order.Payed,
+            Supplies = SupplyExtensions.ToResponseSupplies(supplies, categories)
+        };
     }
 
     //Category processing

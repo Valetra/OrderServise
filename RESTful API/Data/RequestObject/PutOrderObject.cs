@@ -2,6 +2,6 @@
 
 public class PutOrderObject
 {
-    public string? Status { get; set; }
+    public string Status { get; set; }
     public bool Payed { get; set; }
 }

@@ -1,6 +1,5 @@
-﻿using Contracts;
-using Newtonsoft.Json;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
+using Models;
 
 namespace ChatBot.Managers;
 

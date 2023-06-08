@@ -1,11 +1,12 @@
 ﻿using Contracts;
+using Models;
 using Newtonsoft.Json;
 
 namespace ChatBot.Managers;
 
 public class CategoryManager
 {
-    public static async Task<List<Category>?> GetCategoriesFromAPI(string apiPath)
+    public static async Task<List<ICategory>> GetCategoriesFromAPI(string apiPath)
     {
         string controllerName = "category";
 
@@ -16,8 +17,13 @@ public class CategoryManager
         using HttpResponseMessage response = await httpClient.SendAsync(request);
 
         if (response.IsSuccessStatusCode)
-            return JsonConvert.DeserializeObject<List<Category>>(await response.Content.ReadAsStringAsync());
+        {
+            string responseString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<Category>>(responseString)?.ToList<ICategory>() ?? new();
+        }
         else
-            return null;
+        {
+            return new();
+        }
     }
 }
