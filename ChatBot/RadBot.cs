@@ -137,11 +137,12 @@ public class RadBot
             categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
 
             actionText = $"Выберите раздел";
-            newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, !_order.SuppliesId.Any());
+            newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
             buttons = newButtons.GetCategoryButtons();
         }
         else if (callbackData == "cancel")
         {
+            _order = new();
             actionText = "Заказ был отменен";
             buttons = null;
         }
@@ -164,6 +165,25 @@ public class RadBot
             buttons = null;
             _order = new();
         }
+        else if (callbackData == "notAction")
+        {
+            supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+            categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
+            newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
+
+            actionText = $"Выберите раздел";
+            buttons = newButtons.GetCategoryButtons();
+        }
+        else if (callbackData.Contains("add"))
+        {
+            //Обработать добавление элемента в заказ
+
+        }
+        else if (callbackData.Contains("sub"))
+        {
+            //Обработать удаление элемента из заказа
+
+        }
         else
         {
             Guid callbackDataGuid = new(callbackData);
@@ -179,14 +199,14 @@ public class RadBot
             {
                 string categoryName = categories.First(c => c.Id == callbackDataGuid).Name;
                 actionText = $"Выберите {categoryName}";
-                newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, !_order.SuppliesId.Any());
+                newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
                 buttons = newButtons.GetCategorySuppliesButtons(callbackDataGuid);
             }
             else if (supplyIds.Contains(callbackDataGuid))
             {
                 _order.SuppliesId.Add(callbackDataGuid);
                 actionText = $"Выберите раздел";
-                newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, !_order.SuppliesId.Any());
+                newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
                 buttons = newButtons.GetCategoryButtons();
             }
         }
@@ -250,7 +270,7 @@ public class RadBot
 
     private async Task MakeOrder(long chatId, CancellationToken cancellationToken, List<ICategory> categories, List<ISupply> supplies)
     {
-        InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, !_order.SuppliesId.Any());
+        InlineKeyboardButtons newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
 
         await _client.SendTextMessageAsync(
           chatId: chatId,
