@@ -1,5 +1,5 @@
 # RadBot
-## This project have 3 entity that constitutes a full service for creating an order in cafe and processing order on admin panel.
+## This project have 3 entity that constitutes a full service for creating by costumer an order/preorder in cafe and processing it on admin panel.
 ### Service entities: RESTful API(done), TelegramBot(in progress), AdminPanel(not started).
 
 
