@@ -1,5 +1,5 @@
 # RadBot
-## This solution have 3 projects that constitutes a full service for creating by costumer an order/preorder in cafe and processing it on admin panel.
+## This solution have 3 projects that constitutes a full service for creating by customer an order/preorder in cafe and processing it in admin panel.
 ### Service projects: RESTful API(done), ChatBot(in progress), AdminPanel(not started).
 
 

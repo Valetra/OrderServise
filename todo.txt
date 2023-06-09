@@ -25,7 +25,7 @@ TODO:
                  string GetOrderURL(apiURL) => "http://localhost:5132/order"
                  string GetCategoryURL(apiURL) => "http://localhost:5132/category"
                  string GetOrderSupplyURL(apiURL) => "http://localhost:5132/getOrderWithSupplies"
-        [ ] 6.4) Изменить фетчинг данных с backend`a, и пользоваться им только там и когда он нужен
+        [x] 6.4) Изменить фетчинг данных с backend`a, и пользоваться им только там и когда он нужен
     [ ] 7) Доработать RESTful API
         [ ] 7.0) Создать RequestObject: PostSupplyObject и PutSupplyObject
         [ ] 7.1) Интегрировать объекты в API

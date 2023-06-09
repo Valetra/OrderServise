@@ -115,16 +115,16 @@ public class RadBot
 
     private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
     {
-        List<ICategory> categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
-        List<ISupply> supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
         string? callbackData = callbackQuery.Data;
         string actionText = "";
         InlineKeyboardMarkup? buttons = null;
         InlineKeyboardButtons newButtons;
 
+        List<ISupply> supplies;
+        List<Guid> supplyIds;
 
-        List<Guid> supplyIds = supplies.Select(n => n.Id).ToList();
-        List<Guid> categoryIds = categories.Select(c => c.Id).ToList();
+        List<ICategory> categories;
+        List<Guid> categoryIds;
 
         if (callbackData is null)
         {
@@ -133,6 +133,9 @@ public class RadBot
 
         if (callbackData == "back")
         {
+            supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+            categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
+
             actionText = $"Выберите раздел";
             newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, !_order.SuppliesId.Any());
             buttons = newButtons.GetCategoryButtons();
@@ -144,6 +147,8 @@ public class RadBot
         }
         else if (callbackData == "accept")
         {
+            supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+
             await OrderManager.PostOrderToAPI(_apiPath, _order);
 
             var groupedSupplies = _order.SuppliesId.GroupBy(id => id);
@@ -162,6 +167,13 @@ public class RadBot
         else
         {
             Guid callbackDataGuid = new(callbackData);
+
+            supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+            supplyIds = supplies.Select(n => n.Id).ToList();
+
+            categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
+            categoryIds = categories.Select(c => c.Id).ToList();
+
 
             if (categoryIds.Contains(callbackDataGuid))
             {
