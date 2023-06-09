@@ -1,19 +1,33 @@
 TODO:
 {
     Инфраструктура приложения "Заказ еды/напитка с собой или в заведении":
-    TelegramAPI <-> RadBot <-> webAPI(Entity Framework + DB - PostgreSQL) <-> AdminPanelWeb
+    TelegramAPI <-> RadBot <-> webAPI(Entity Framework + DB - PostgreSQL) <-> AdminPanel
 
 
     [x] 1) Создать webAPI
     [x] 2) Привязать к webAPI - dbPostgreSQL
     [x] 3) Создать моделей с помощью Entity Framework: (1 ко многим)order -> orders supplies  <- supply(1 ко многим).
     [x] 4) Настроить webAPI на взаимодействие с таблицами
-    [ ] 5) Привязать RadBot`а к webAPI функцианалу
-        [ ] 5.0)Создать проект "Cotracts" - для предостовления доступа ChatBot -> RESTful API
-        [ ]5.1) Создать Supply manager
+    [x] 5) Привязать RadBot`а к webAPI функцианалу
+        [x] 5.0)Создать проект "Cotracts" - для предостовления доступа ChatBot -> RESTful API
+        [x]5.1) Создать Supply manager
             [x] 5.1.1) Создать ResponseSupplyObject
             [x] 5.1.2) Научится обрабатывать callback от нажатия кнопок
-            [ ] 5.1.3) Генирировать кнопки для создания заказа из базы данных с использованием RESTful API
-        [ ]5.2) Создать Order manager
-    [ ] 6) Создать webAdminPanel для заведения для изменения таблицы supply(продукт/цена/время приготовления) и order(status)
+            [x] 5.1.3) Генирировать кнопки для создания заказа из базы данных с использованием RESTful API
+        [x]5.2) Создать Order manager
+    [ ] 6) Доработать чат-бота
+        [x] 6.0) Убрать кнопку "Подтвердить заказ", если _order.SuppliesIds == 0
+        [x] 6.1) Оставить кнопку "Подтвердить заказ" только на "домашнем интерфейсе"
+        [ ] 6.2) Создать корзину над основным интерфейсом выбора в виде 3-ёх кнопок: 
+                 [supply - кол-во шт](не активная) [+](активная)[-](активная)
+        [ ] 6.3) Создать класс реализующий методы:
+                 string GetSupplyURL(apiURL) => "http://localhost:5132/supply"
+                 string GetOrderURL(apiURL) => "http://localhost:5132/order"
+                 string GetCategoryURL(apiURL) => "http://localhost:5132/category"
+                 string GetOrderSupplyURL(apiURL) => "http://localhost:5132/getOrderWithSupplies"
+        [ ] 6.4) Изменить фетчинг данных с backend`a, и пользоваться им только там и когда он нужен
+    [ ] 7) Доработать RESTful API
+        [ ] 7.0) Создать RequestObject: PostSupplyObject и PutSupplyObject
+        [ ] 7.1) Интегрировать объекты в API
+    [ ] 8) Создать webAdminPanel для заведения для изменения таблицы supply(продукт/цена/время приготовления) и order(status)
 }
