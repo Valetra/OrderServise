@@ -1,8 +1,10 @@
 # RadBot
-## Telegram chatbot that allows anyone to create an order in cafe.
+## This project have 3 entity that constitutes a full service for creating an order in cafe and processing order on admin panel.
+### Service entities: RESTful API(done), TelegramBot(in progress), AdminPanel(not started).
 
-## Two files need to be added:
-### 1) RadBot/ChatBot/private_data.cs with following code ->
+
+## Two files need to be added for successful  execution :
+### 1) RadBot/ChatBot/private_data.cs
 ```
 namespace private_data
 {
@@ -12,7 +14,7 @@ namespace private_data
     }
 }
 ```
-### 2) RadBot/RESTful API/appsettings.json with following code ->
+### 2) RadBot/RESTful API/appsettings.json
 ```
 {
   "ConnectionStrings": {
