@@ -26,6 +26,7 @@ public class RadBot
     private readonly TelegramBotClient _client;
     private readonly string _apiPath;
     private Order _order = new();
+
     public RadBot(string token, CancellationToken cancellationToken, string apiPath)
     {
         _client = new TelegramBotClient(token);
@@ -75,8 +76,6 @@ public class RadBot
         List<ICategory> categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
         List<ISupply> supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
 
-
-
         if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
         {
             var chatId = update.Message.Chat.Id;
@@ -109,7 +108,7 @@ public class RadBot
                     break;
             }
         }
-        if (update.CallbackQuery != null)
+        if (update.CallbackQuery != null && update.CallbackQuery.Data != "notButton")
             await HandleCallbackQuery(botClient, update.CallbackQuery, cancellationToken);
     }
 
@@ -165,27 +164,44 @@ public class RadBot
             buttons = null;
             _order = new();
         }
-        else if (callbackData == "notAction")
+        else if (callbackData == "confirm")
         {
-            supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
-            categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
-            newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
-
-            actionText = $"Выберите раздел";
-            buttons = newButtons.GetCategoryButtons();
+            //переместить вывод заказа сюда, и отправлять POST отсюда
         }
         else if (callbackData.Contains("add"))
         {
             //Обработать добавление элемента в заказ
+            Guid callbackDataGuid = new(callbackData.Remove(0, 3));
+
+            supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+            supplyIds = supplies.Select(n => n.Id).ToList();
+
+            categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
+
+            _order.SuppliesId.Add(callbackDataGuid);
+            actionText = $"Выберите раздел";
+            newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
+            buttons = newButtons.GetCategoryButtons();
 
         }
         else if (callbackData.Contains("sub"))
         {
             //Обработать удаление элемента из заказа
+            Guid callbackDataGuid = new(callbackData.Remove(0, 3));
 
+            supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+            supplyIds = supplies.Select(n => n.Id).ToList();
+
+            categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
+
+            _order.SuppliesId.Remove(callbackDataGuid);
+            actionText = $"Выберите раздел";
+            newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
+            buttons = newButtons.GetCategoryButtons();
         }
         else
         {
+
             Guid callbackDataGuid = new(callbackData);
 
             supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
@@ -210,7 +226,6 @@ public class RadBot
                 buttons = newButtons.GetCategoryButtons();
             }
         }
-
         return await CallbackAction(botClient, callbackQuery, actionText, buttons, cancellationToken);
     }
 

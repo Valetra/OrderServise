@@ -55,7 +55,7 @@ public class InlineKeyboardButtons
 
                 rowList.Add(new List<InlineKeyboardButton>
                 {
-                    InlineKeyboardButton.WithCallbackData(text: $"{name} - {supplyGroup.Count()} шт", callbackData: "notAction"),
+                    InlineKeyboardButton.WithCallbackData(text: $"{name} - {supplyGroup.Count()}", callbackData: "notButton"),
                     InlineKeyboardButton.WithCallbackData(text: "+1", callbackData: $"add{supplyGroup.Key}"),
                     InlineKeyboardButton.WithCallbackData(text: "-1", callbackData: $"sub{supplyGroup.Key}"),
 
@@ -101,7 +101,7 @@ public class InlineKeyboardButtons
 
                 rowList.Add(new List<InlineKeyboardButton>
                 {
-                    InlineKeyboardButton.WithCallbackData(text: $"{name} - {supplyGroup.Count()} шт", callbackData: "notAction"),
+                    InlineKeyboardButton.WithCallbackData(text: $"{name} - {supplyGroup.Count()}", callbackData: "notButton"),
                     InlineKeyboardButton.WithCallbackData(text: "+1", callbackData: $"add{supplyGroup.Key}"),
                     InlineKeyboardButton.WithCallbackData(text: "-1", callbackData: $"sub{supplyGroup.Key}"),
                 });
