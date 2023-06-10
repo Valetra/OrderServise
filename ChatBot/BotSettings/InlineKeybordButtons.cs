@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Models;
+using System.Collections.Generic;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BotSettings;
@@ -11,12 +12,40 @@ public class InlineKeyboardButtons
     private readonly List<ICategory> _categories;
     private readonly List<ISupply> _supplies;
 
+    private readonly List<InlineKeyboardButton> _backButton = new()
+    {
+        InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: "back")
+    };
+
+    private readonly List<InlineKeyboardButton> _bucketButton = new()
+    {
+        InlineKeyboardButton.WithCallbackData(text: "корзина 🛒", callbackData: "notButton")
+    };
+
+    List<InlineKeyboardButton> _acceptOrderButton = new()
+    {
+        InlineKeyboardButton.WithCallbackData(text: "Подтвердить заказ", callbackData: "confirm")
+    };
+
     public InlineKeyboardButtons(string apiPath, List<ICategory> categories, List<ISupply> supplies, Order order)
     {
         _apiPath = apiPath;
         _categories = categories;
         _supplies = supplies;
         _order = order;
+    }
+
+    public InlineKeyboardMarkup GetConfirmOrderButtons()
+    {
+        List<List<InlineKeyboardButton>> rowList = new();
+
+        rowList.Add(new List<InlineKeyboardButton>
+        {
+            InlineKeyboardButton.WithCallbackData(text: "Принять заказ", callbackData: "accept")
+        });
+        rowList.Add(_backButton);
+
+        return new InlineKeyboardMarkup(rowList);
     }
 
     public InlineKeyboardMarkup GetCategoryButtons()
@@ -30,7 +59,7 @@ public class InlineKeyboardButtons
 
         List<InlineKeyboardButton> cancelButton = new()
         {
-            InlineKeyboardButton.WithCallbackData(text: "отмена заказа", callbackData: "cancel")
+            InlineKeyboardButton.WithCallbackData(text: "Отмена заказа", callbackData: "cancel")
         };
 
         if (!_order.SuppliesId.Any())
@@ -42,11 +71,6 @@ public class InlineKeyboardButtons
         }
         else
         {
-            List<InlineKeyboardButton> acceptOrderButton = new()
-            {
-                InlineKeyboardButton.WithCallbackData(text: "Подтвердить заказ", callbackData: "accept")
-            };
-
             var groupedSupplies = _order.SuppliesId.GroupBy(id => id);
 
             foreach (var supplyGroup in groupedSupplies)
@@ -55,14 +79,18 @@ public class InlineKeyboardButtons
 
                 rowList.Add(new List<InlineKeyboardButton>
                 {
-                    InlineKeyboardButton.WithCallbackData(text: $"{name} - {supplyGroup.Count()}", callbackData: "notButton"),
-                    InlineKeyboardButton.WithCallbackData(text: "+1", callbackData: $"add{supplyGroup.Key}"),
-                    InlineKeyboardButton.WithCallbackData(text: "-1", callbackData: $"sub{supplyGroup.Key}"),
-
+                    InlineKeyboardButton.WithCallbackData(text: $"{name}", callbackData: "notButton")
+                });
+                rowList.Add(new List<InlineKeyboardButton>
+                {
+                    InlineKeyboardButton.WithCallbackData(text: $"{supplyGroup.Count()} шт", callbackData: "notButton"),
+                    InlineKeyboardButton.WithCallbackData(text: "+1", callbackData: $"increment:{supplyGroup.Key}"),
+                    InlineKeyboardButton.WithCallbackData(text: "-1", callbackData: $"decrement:{supplyGroup.Key}"),
                 });
             }
+            rowList.Add(_bucketButton);
             rowList.Add(categoryButtons);
-            rowList.Add(acceptOrderButton);
+            rowList.Add(_acceptOrderButton);
             rowList.Add(cancelButton);
 
             return new InlineKeyboardMarkup(rowList);
@@ -73,21 +101,16 @@ public class InlineKeyboardButtons
     {
         List<List<InlineKeyboardButton>> rowList = new();
 
-
         List<InlineKeyboardButton> subcategoryButtons = _supplies
             .Where(s => s.CategoryId == categoryId)
             .Select(s => InlineKeyboardButton.WithCallbackData(text: s.Name, callbackData: s.Id.ToString()))
             .ToList();
 
-        List<InlineKeyboardButton> backButton = new()
-        {
-            InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: "back")
-        };
 
         if (!_order.SuppliesId.Any())
         {
             rowList.Add(subcategoryButtons);
-            rowList.Add(backButton);
+            rowList.Add(_backButton);
 
             return new InlineKeyboardMarkup(rowList);
         }
@@ -101,13 +124,18 @@ public class InlineKeyboardButtons
 
                 rowList.Add(new List<InlineKeyboardButton>
                 {
-                    InlineKeyboardButton.WithCallbackData(text: $"{name} - {supplyGroup.Count()}", callbackData: "notButton"),
-                    InlineKeyboardButton.WithCallbackData(text: "+1", callbackData: $"add{supplyGroup.Key}"),
-                    InlineKeyboardButton.WithCallbackData(text: "-1", callbackData: $"sub{supplyGroup.Key}"),
+                    InlineKeyboardButton.WithCallbackData(text: $"{name}", callbackData: "notButton")
+                });
+                rowList.Add(new List<InlineKeyboardButton>
+                {
+                    InlineKeyboardButton.WithCallbackData(text: $"{supplyGroup.Count()} шт", callbackData: "notButton"),
+                    InlineKeyboardButton.WithCallbackData(text: "+1", callbackData: $"increment:{supplyGroup.Key}"),
+                    InlineKeyboardButton.WithCallbackData(text: "-1", callbackData: $"decrement:{supplyGroup.Key}"),
                 });
             }
+            rowList.Add(_bucketButton);
             rowList.Add(subcategoryButtons);
-            rowList.Add(backButton);
+            rowList.Add(_backButton);
 
             return new InlineKeyboardMarkup(rowList);
         }

@@ -135,7 +135,7 @@ public class RadBot
             supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
             categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
 
-            actionText = $"Выберите раздел";
+            actionText = $"Создайте заказ";
             newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
             buttons = newButtons.GetCategoryButtons();
         }
@@ -147,9 +147,16 @@ public class RadBot
         }
         else if (callbackData == "accept")
         {
-            supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
-
             await OrderManager.PostOrderToAPI(_apiPath, _order);
+
+            actionText = $"Ваш заказ был принят в обработку.\nОжидайте подтверждения.";
+            buttons = null;
+            _order = new();
+        }
+        else if (callbackData == "confirm")
+        {
+            supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
+            categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
 
             var groupedSupplies = _order.SuppliesId.GroupBy(id => id);
             string suppliesInOrder = "";
@@ -157,21 +164,17 @@ public class RadBot
             foreach (var supplyGroup in groupedSupplies)
             {
                 string name = supplies.FirstOrDefault(s => s.Id == supplyGroup.Key)?.Name ?? "";
-                suppliesInOrder += $"{name} - {supplyGroup.Count()} шт.\n";
+                suppliesInOrder += $"{name} - {supplyGroup.Count()} шт.";
             }
 
-            actionText = $"Ваш заказ:\n\n{suppliesInOrder}";
-            buttons = null;
-            _order = new();
+            actionText = $"Подтвердите ваш заказ:\n\n{suppliesInOrder}";
+
+            newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
+            buttons = newButtons.GetConfirmOrderButtons();
         }
-        else if (callbackData == "confirm")
+        else if (callbackData.Split(':')[0] == "increment")
         {
-            //переместить вывод заказа сюда, и отправлять POST отсюда
-        }
-        else if (callbackData.Contains("add"))
-        {
-            //Обработать добавление элемента в заказ
-            Guid callbackDataGuid = new(callbackData.Remove(0, 3));
+            Guid callbackDataGuid = new(callbackData.Split(':')[1]);
 
             supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
             supplyIds = supplies.Select(n => n.Id).ToList();
@@ -179,23 +182,25 @@ public class RadBot
             categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
 
             _order.SuppliesId.Add(callbackDataGuid);
-            actionText = $"Выберите раздел";
+            actionText = $"Создайте заказ";
             newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
             buttons = newButtons.GetCategoryButtons();
 
         }
-        else if (callbackData.Contains("sub"))
+        else if (callbackData.Split(':')[0] == "decrement")
         {
-            //Обработать удаление элемента из заказа
-            Guid callbackDataGuid = new(callbackData.Remove(0, 3));
+            Guid callbackDataGuid = new(callbackData.Split(':')[1]);
 
             supplies = await SupplyManager.GetSuppliesFromAPI(_apiPath);
             supplyIds = supplies.Select(n => n.Id).ToList();
 
             categories = await CategoryManager.GetCategoriesFromAPI(_apiPath);
 
+            _order.SuppliesId.Reverse();
             _order.SuppliesId.Remove(callbackDataGuid);
-            actionText = $"Выберите раздел";
+            _order.SuppliesId.Reverse();
+
+            actionText = $"Создайте заказ";
             newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
             buttons = newButtons.GetCategoryButtons();
         }
@@ -214,14 +219,14 @@ public class RadBot
             if (categoryIds.Contains(callbackDataGuid))
             {
                 string categoryName = categories.First(c => c.Id == callbackDataGuid).Name;
-                actionText = $"Выберите {categoryName}";
+                actionText = $"Создайте заказ";
                 newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
                 buttons = newButtons.GetCategorySuppliesButtons(callbackDataGuid);
             }
             else if (supplyIds.Contains(callbackDataGuid))
             {
                 _order.SuppliesId.Add(callbackDataGuid);
-                actionText = $"Выберите раздел";
+                actionText = $"Создайте заказ";
                 newButtons = new InlineKeyboardButtons(_apiPath, categories, supplies, _order);
                 buttons = newButtons.GetCategoryButtons();
             }
