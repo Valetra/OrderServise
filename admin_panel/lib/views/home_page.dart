@@ -47,11 +47,13 @@ class _HomePageState extends State<HomePage> {
           itemCount: orders?.length,
           itemBuilder: (context, index) {
             return Container(
-              child:
-                  Text('''Идентификатор заказа: ${orders![index].id.toString()}
+              child: Text(
+                '''Номер заказа: ${index + 1} 
 Статус оплаты: ${orders![index].payed.toString()}
 Статус заказа: ${orders![index].status}
-              '''),
+              ''',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             );
           },
         ),
