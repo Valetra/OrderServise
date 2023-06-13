@@ -54,13 +54,13 @@ public class OrderController : ControllerBase
         return CreatedAtAction(nameof(GetOrder), new { id = orderEntity.Id }, orderEntity);
     }
 
-    [HttpPut("{orderId}")]
-    public async Task<ActionResult<Order>> PutOrder(PutOrderObject order, Guid orderId)
+    [HttpPut]
+    public async Task<ActionResult<Order>> PutOrder(PutOrderObject order)
     {
-        Order? existsOrder = await _botService.GetOrder(orderId);
+        Order? existsOrder = await _botService.GetOrder(order.Id);
 
         if (existsOrder == null)
-            return NotFound($"Order with id = {orderId}, was not found.");
+            return NotFound($"Order with id = {order.Id}, was not found.");
 
         existsOrder.Status = order.Status;
         existsOrder.Payed = order.Payed;

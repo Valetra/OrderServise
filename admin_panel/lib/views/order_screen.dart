@@ -22,11 +22,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
     super.initState();
 
     //Fetch data from API
-    getData();
+    getOrders();
   }
 
-  getData() async {
-    orders = await RemotesService().getOrders();
+  getOrders() async {
+    orders = await RemotesService().getOrderList();
 
     if (orders != null) {
       setState(() {

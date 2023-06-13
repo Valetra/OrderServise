@@ -1,11 +1,15 @@
 import 'package:flutter_guid/flutter_guid.dart';
 import 'dart:convert';
 
-List<Order> orderFromJson(String str) =>
+List<Order> orderListFromJson(String str) =>
     List<Order>.from(json.decode(str).map((x) => Order.fromJson(x)));
 
-String orderToJson(List<Order> data) =>
+String orderListToJson(List<Order> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
+Order orderFromJson(String str) => Order.fromJson(json.decode(str));
+
+String orderToJson(Order data) => json.encode(data.toJson());
 
 class Order {
   String status;
