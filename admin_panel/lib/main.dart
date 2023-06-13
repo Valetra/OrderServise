@@ -1,4 +1,6 @@
 import 'package:admin_panel/views/home_screen.dart';
+import 'package:admin_panel/views/order_screen.dart';
+import 'package:admin_panel/views/supply_screen.dart';
 
 import 'package:flutter/material.dart';
 
