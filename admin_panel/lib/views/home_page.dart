@@ -61,3 +61,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+// ElevatedButton(
+//   child: const Text('Блюда'),
+//   onPressed: () {
+//     Navigator.push(
+//       context,
+//       MaterialPageRoute(builder: (context) => const SecondRoute()),
+//     );
+//   },
+// )
+
+class SecondRoute extends StatelessWidget {
+  const SecondRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Блюда'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('К заказам'),
+        ),
+      ),
+    );
+  }
+}

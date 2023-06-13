@@ -13,5 +13,6 @@ class RemotesService {
 
       return orderFromJson(json);
     }
+    return null;
   }
 }
