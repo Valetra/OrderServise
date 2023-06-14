@@ -2,7 +2,6 @@ import 'package:admin_panel/Models/order.dart';
 import 'package:admin_panel/services/remote_service.dart';
 import 'package:admin_panel/services/screen_arguments.dart';
 import 'package:admin_panel/widgets/scrollable_widget.dart';
-import 'package:admin_panel/widgets/text_dialog_widget.dart';
 import 'package:admin_panel/utils.dart';
 
 import 'package:flutter/material.dart';
@@ -52,7 +51,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   Widget buildDataTable() {
     final columns = ['Номер заказа', 'Статус заказа', 'Оплата'];
-
+    mapIterator = 1;
     return DataTable(
       columns: getColumns(columns),
       rows: getRows(orders),
@@ -65,45 +64,61 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ))
       .toList();
 
+  List<String> statuses = [
+    "Unconfirmed",
+    "Confirmed",
+    "In progres",
+    "Done",
+    "Cancelled"
+  ];
+
+  int mapIterator = 1;
   List<DataRow> getRows(List<Order> orders) => orders.map((Order order) {
-        final cells = [order.id, order.status, order.payed];
+        var cells = [order.id, order.status, order.payed];
 
         return DataRow(
           cells: Utils.modelBuilder(cells, (index, cell) {
-            final showEditIcon = index == 1;
-
-            return DataCell(Text('$cell'), showEditIcon: showEditIcon,
-                onTap: () {
-              switch (index) {
-                case 1:
-                  editOrderStatus(order);
-                  ScrollableWidget(child: buildDataTable());
-                  break;
-              }
-            });
+            if (index == 0) {
+              return DataCell(Text('${mapIterator++}'));
+            } else if (index == 2) {
+              return DataCell(Text('$cell'));
+            } else {
+              return DataCell(
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Select an item',
+                    suffixIcon: DropdownButtonFormField(
+                      dropdownColor: const Color.fromARGB(255, 190, 190, 190),
+                      value: order.status,
+                      onChanged: (newValue) {
+                        setState(() {
+                          order.status = newValue.toString();
+                          editOrderStatus(order);
+                        });
+                      },
+                      items: statuses
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              );
+            }
           }),
         );
       }).toList();
 
   Future editOrderStatus(Order editOrder) async {
-    final status = await showTextDialog(
-      context,
-      title: 'Измените статус заказа',
-      value: editOrder.status,
-    );
-
     updateOrder(Order order) async {
-      Order updatedOrder = await RemotesService().updateOrder(order, status);
+      Order updatedOrder = await RemotesService().updateOrder(editOrder);
       return updatedOrder;
     }
 
     setState(() {
-      orders = orders.map((order) {
-        final isEditedOrder = order == editOrder;
-
-        return isEditedOrder ? order.copy(status: status) : order;
-      }).toList();
-
       updateOrder(editOrder);
     });
   }
