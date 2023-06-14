@@ -1,11 +1,14 @@
+import 'package:admin_panel/models/category.dart';
 import 'package:admin_panel/services/screen_arguments.dart';
 import 'package:admin_panel/models/supply.dart';
 import 'package:admin_panel/services/remote_service.dart';
 import 'package:admin_panel/widgets/scrollable_widget.dart';
 import 'package:admin_panel/utils.dart';
 import 'package:admin_panel/widgets/text_dialog_widget.dart';
+import 'package:flutter_guid/flutter_guid.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SuppliesScreen extends StatefulWidget {
   const SuppliesScreen({super.key});
@@ -17,6 +20,9 @@ class SuppliesScreen extends StatefulWidget {
 
 class _SuppliesScreenState extends State<SuppliesScreen> {
   List<Supply> supplies = List.empty();
+  List<Category> categories = List.empty();
+  List<String> categoryNames = List.empty(growable: true);
+
   bool isLoaded = false;
 
   @override
@@ -25,10 +31,23 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
 
     //Fetch data from API
     getSupplies();
+    getCategories();
   }
 
   getSupplies() async {
     supplies = await RemotesService().getSupplyList();
+
+    setState(() {
+      isLoaded = true;
+    });
+  }
+
+  getCategories() async {
+    categories = await RemotesService().getCategoryList();
+
+    for (var category in categories) {
+      categoryNames.add(category.name);
+    }
 
     setState(() {
       isLoaded = true;
@@ -73,23 +92,70 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
 
         return DataRow(
           cells: Utils.modelBuilder(cells, (index, cell) {
-            return DataCell(
-              Text('$cell'),
-              showEditIcon: true,
-              onTap: () {
-                switch (index) {
-                  case 0:
-                    editSupplyName(supply);
-                    break;
-                  case 1:
-                    editSupplyPrice(supply);
-                    break;
-                }
-              },
-            );
+            if (index != 3) {
+              return DataCell(
+                Text('$cell'),
+                showEditIcon: true,
+                onTap: () {
+                  switch (index) {
+                    case 0:
+                      editSupplyName(supply);
+                      break;
+                    case 1:
+                      editSupplyPrice(supply);
+                      break;
+                    case 2:
+                      editSupplyCookingTime(supply);
+                      break;
+                  }
+                },
+              );
+            } else {
+              return DataCell(
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Select an item',
+                    suffixIcon: DropdownButtonFormField(
+                      dropdownColor: const Color.fromARGB(255, 190, 190, 190),
+                      value: categories
+                          .where((c) => c.id == supply.categoryId)
+                          .first
+                          .name,
+                      onChanged: (newValue) {
+                        setState(() {
+                          supply.categoryId = categories
+                              .where((c) => c.name == newValue)
+                              .first
+                              .id;
+                          editSupplyCategoryId(supply);
+                        });
+                      },
+                      items: categoryNames
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              );
+            }
           }),
         );
       }).toList();
+
+  Future editSupplyCategoryId(Supply editSupply) async {
+    updateOrder(Supply supply) async {
+      Supply updatedSupply = await RemotesService().updateSupply(editSupply);
+      return updatedSupply;
+    }
+
+    setState(() {
+      updateOrder(editSupply);
+    });
+  }
 
   Future editSupplyName(Supply editedSupply) async {
     final name = await showTextDialog(
@@ -139,6 +205,32 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         final isEditedSupply = supply == editedSupply;
 
         return isEditedSupply ? supply.copy(price: int.parse(price)) : supply;
+      }).toList();
+    });
+  }
+
+  Future editSupplyCookingTime(Supply editedSupply) async {
+    final cookingTime = await showTextDialog(
+      context,
+      title: "Измените время приготовления блюда",
+      value: editedSupply.cookingTime,
+    );
+    updateSupply(Supply supply) async {
+      if (cookingTime == null) {
+        return null;
+      }
+      supply.cookingTime = cookingTime;
+      Supply updatedSupply = await RemotesService().updateSupply(supply);
+      return updatedSupply;
+    }
+
+    setState(() {
+      updateSupply(editedSupply);
+
+      supplies = supplies.map((supply) {
+        final isEditedSupply = supply == editedSupply;
+
+        return isEditedSupply ? supply.copy(cookingTime: cookingTime) : supply;
       }).toList();
     });
   }

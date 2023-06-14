@@ -1,4 +1,5 @@
 import 'package:admin_panel/Models/order.dart';
+import 'package:admin_panel/models/category.dart';
 import 'package:admin_panel/models/supply.dart';
 import 'package:http/http.dart' as http;
 
@@ -65,5 +66,19 @@ class RemotesService {
       return supplyFromJson(json);
     }
     throw Exception(response.reasonPhrase);
+  }
+
+  Future<List<Category>> getCategoryList() async {
+    var client = http.Client();
+
+    var uri = Uri.parse('http://localhost:5132/category');
+    var response = await client.get(uri);
+
+    if (response.statusCode == 200) {
+      var json = response.body;
+
+      return categoryListFromJson(json);
+    }
+    throw Exception("Nothing to return.");
   }
 }

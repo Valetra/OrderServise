@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: bgColor,
-        title: Row(children: <Widget>[
+        title: Wrap(spacing: 10, children: <Widget>[
           const Text("Админ панель"),
           TextButton(
             style: style,
