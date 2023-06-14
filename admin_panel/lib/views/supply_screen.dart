@@ -165,7 +165,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
     );
     updateSupply(Supply supply) async {
       if (name == null) {
-        throw Exception("You pressed escape button");
+        return null;
       }
       supply.name = name;
       Supply updatedSupply = await RemotesService().updateSupply(supply);
@@ -191,7 +191,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
     );
     updateSupply(Supply supply) async {
       if (price == null) {
-        throw Exception("You pressed escape button");
+        return null;
       }
       supply.price = int.parse(price);
       Supply updatedSupply = await RemotesService().updateSupply(supply);
@@ -200,12 +200,13 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
 
     setState(() {
       updateSupply(editedSupply);
+      if (price != null) {
+        supplies = supplies.map((supply) {
+          final isEditedSupply = supply == editedSupply;
 
-      supplies = supplies.map((supply) {
-        final isEditedSupply = supply == editedSupply;
-
-        return isEditedSupply ? supply.copy(price: int.parse(price)) : supply;
-      }).toList();
+          return isEditedSupply ? supply.copy(price: int.parse(price)) : supply;
+        }).toList();
+      }
     });
   }
 
