@@ -81,6 +81,9 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
                   case 0:
                     editSupplyName(supply);
                     break;
+                  case 1:
+                    editSupplyPrice(supply);
+                    break;
                 }
               },
             );
@@ -110,6 +113,32 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         final isEditedSupply = supply == editedSupply;
 
         return isEditedSupply ? supply.copy(name: name) : supply;
+      }).toList();
+    });
+  }
+
+  Future editSupplyPrice(Supply editedSupply) async {
+    final price = await showTextDialog(
+      context,
+      title: "Измените цену блюда",
+      value: editedSupply.price.toString(),
+    );
+    updateSupply(Supply supply) async {
+      if (price == null) {
+        throw Exception("You pressed escape button");
+      }
+      supply.price = int.parse(price);
+      Supply updatedSupply = await RemotesService().updateSupply(supply);
+      return updatedSupply;
+    }
+
+    setState(() {
+      updateSupply(editedSupply);
+
+      supplies = supplies.map((supply) {
+        final isEditedSupply = supply == editedSupply;
+
+        return isEditedSupply ? supply.copy(price: int.parse(price)) : supply;
       }).toList();
     });
   }
