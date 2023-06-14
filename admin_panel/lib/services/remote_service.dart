@@ -2,7 +2,7 @@ import 'package:admin_panel/Models/order.dart';
 import 'package:http/http.dart' as http;
 
 class RemotesService {
-  Future<List<Order>?> getOrderList() async {
+  Future<List<Order>> getOrderList() async {
     var client = http.Client();
 
     var uri = Uri.parse('http://localhost:5132/order');
@@ -13,10 +13,10 @@ class RemotesService {
 
       return orderListFromJson(json);
     }
-    return null;
+    throw Exception("Nothing to return.");
   }
 
-  Future<Order?> putOrder(Order order) async {
+  Future<Order> updateOrder(Order order) async {
     var client = http.Client();
 
     var uri = Uri.parse('http://localhost:5132/order');
@@ -27,6 +27,6 @@ class RemotesService {
 
       return orderFromJson(json);
     }
-    return null;
+    throw Exception("Nothing to return.");
   }
 }
