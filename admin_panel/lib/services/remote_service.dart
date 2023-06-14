@@ -1,7 +1,5 @@
-import 'dart:math';
-import 'dart:io';
-
 import 'package:admin_panel/Models/order.dart';
+import 'package:admin_panel/models/supply.dart';
 import 'package:http/http.dart' as http;
 
 class RemotesService {
@@ -19,11 +17,11 @@ class RemotesService {
     throw Exception("Nothing to return.");
   }
 
-  Future<Order> updateOrder(Order order, String newStatus) async {
+  Future<Order> updateOrder(Order order) async {
     var client = http.Client();
 
     String jsonRequest =
-        '{"id": "${order.id}", "status": "$newStatus", "payed" : ${order.payed}}';
+        '{"id": "${order.id}", "status": "${order.status}", "payed" : ${order.payed}}';
 
     var uri = Uri.parse('http://localhost:5132/order');
     var response = await client.put(uri,
@@ -32,8 +30,21 @@ class RemotesService {
     if (response.statusCode == 200) {
       var json = response.body;
 
-      stderr.writeln(response.reasonPhrase);
       return orderFromJson(json);
+    }
+    throw Exception("Nothing to return.");
+  }
+
+  Future<List<Supply>> getSupplyList() async {
+    var client = http.Client();
+
+    var uri = Uri.parse('http://localhost:5132/supply');
+    var response = await client.get(uri);
+
+    if (response.statusCode == 200) {
+      var json = response.body;
+
+      return supplyListFromJson(json);
     }
     throw Exception("Nothing to return.");
   }
