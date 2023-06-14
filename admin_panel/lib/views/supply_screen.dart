@@ -3,6 +3,7 @@ import 'package:admin_panel/models/supply.dart';
 import 'package:admin_panel/services/remote_service.dart';
 import 'package:admin_panel/widgets/scrollable_widget.dart';
 import 'package:admin_panel/utils.dart';
+import 'package:admin_panel/widgets/text_dialog_widget.dart';
 
 import 'package:flutter/material.dart';
 
@@ -72,19 +73,44 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
 
         return DataRow(
           cells: Utils.modelBuilder(cells, (index, cell) {
-            return DataCell(Text('$cell'));
+            return DataCell(
+              Text('$cell'),
+              showEditIcon: true,
+              onTap: () {
+                switch (index) {
+                  case 0:
+                    editSupplyName(supply);
+                    break;
+                }
+              },
+            );
           }),
         );
       }).toList();
 
-  // Future editSupply(Supply editedSupply) async {
-  //   updateSupply(Supply order) async {
-  //     Supply updatedSupply = await RemotesService().updateSupply(editedSupply);
-  //     return updatedSupply;
-  //   }
+  Future editSupplyName(Supply editedSupply) async {
+    final name = await showTextDialog(
+      context,
+      title: "Измените название блюда",
+      value: editedSupply.name,
+    );
+    updateSupply(Supply supply) async {
+      if (name == null) {
+        throw Exception("You pressed escape button");
+      }
+      supply.name = name;
+      Supply updatedSupply = await RemotesService().updateSupply(supply);
+      return updatedSupply;
+    }
 
-  //   setState(() {
-  //     updateSupply(editedSupply);
-  //   });
-  // }
+    setState(() {
+      updateSupply(editedSupply);
+
+      supplies = supplies.map((supply) {
+        final isEditedSupply = supply == editedSupply;
+
+        return isEditedSupply ? supply.copy(name: name) : supply;
+      }).toList();
+    });
+  }
 }

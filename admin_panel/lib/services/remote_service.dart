@@ -48,4 +48,22 @@ class RemotesService {
     }
     throw Exception("Nothing to return.");
   }
+
+  Future<Supply> updateSupply(Supply supply) async {
+    var client = http.Client();
+
+    String jsonRequest =
+        '{"id": "${supply.id}", "name": "${supply.name}", "count" : ${supply.count}, "price" : ${supply.price}, "cookingTime": "${supply.cookingTime}", "categoryId": "${supply.categoryId}"}';
+
+    var uri = Uri.parse('http://localhost:5132/supply');
+    var response = await client.put(uri,
+        headers: {'Content-Type': 'application/json'}, body: jsonRequest);
+
+    if (response.statusCode == 200) {
+      var json = response.body;
+
+      return supplyFromJson(json);
+    }
+    throw Exception(response.reasonPhrase);
+  }
 }
