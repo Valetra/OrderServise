@@ -1,7 +1,9 @@
 import 'package:admin_panel/Models/order.dart';
 import 'package:admin_panel/services/remote_service.dart';
 import 'package:admin_panel/services/screen_arguments.dart';
-import 'package:admin_panel/ScrollableWidget.dart';
+import 'package:admin_panel/widgets/scrollable_widget.dart';
+import 'package:admin_panel/widgets/text_dialog_widget.dart';
+import 'package:admin_panel/utils.dart';
 
 import 'package:flutter/material.dart';
 
@@ -66,40 +68,43 @@ class _OrdersScreenState extends State<OrdersScreen> {
   List<DataRow> getRows(List<Order> orders) => orders.map((Order order) {
         final cells = [order.id, order.status, order.payed];
 
-        return DataRow(cells: getCells(cells));
+        return DataRow(
+          cells: Utils.modelBuilder(cells, (index, cell) {
+            final showEditIcon = index == 1;
+
+            return DataCell(Text('$cell'), showEditIcon: showEditIcon,
+                onTap: () {
+              switch (index) {
+                case 1:
+                  editOrderStatus(order);
+                  ScrollableWidget(child: buildDataTable());
+                  break;
+              }
+            });
+          }),
+        );
       }).toList();
 
-  List<DataCell> getCells(List<dynamic> cells) =>
-      cells.map((data) => DataCell(Text('$data'))).toList();
+  Future editOrderStatus(Order editOrder) async {
+    final status = await showTextDialog(
+      context,
+      title: 'Измените статус заказа',
+      value: editOrder.status,
+    );
+
+    updateOrder(Order order) async {
+      Order updatedOrder = await RemotesService().updateOrder(order, status);
+      return updatedOrder;
+    }
+
+    setState(() {
+      orders = orders.map((order) {
+        final isEditedOrder = order == editOrder;
+
+        return isEditedOrder ? order.copy(status: status) : order;
+      }).toList();
+
+      updateOrder(editOrder);
+    });
+  }
 }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
-
-//     return Scaffold(
-//         appBar: AppBar(
-//           backgroundColor: args.backgroundColor,
-//           title: Text(args.title),
-//         ),
-//         body: Visibility(
-//           visible: isLoaded,
-//           replacement: const Center(
-//             child: CircularProgressIndicator(),
-//           ),
-//           child: ListView.builder(
-//             itemCount: orders?.length,
-//             itemBuilder: (context, index) {
-//               return Container(
-//                 child: Text(
-//                   '''Номер заказа: ${index + 1}
-// Статус оплаты: ${orders![index].payed.toString()}
-// Статус заказа: ${orders![index].status}
-//               ''',
-//                   style: const TextStyle(fontWeight: FontWeight.bold),
-//                 ),
-//               );
-//             },
-//           ),
-//         ));
-//   }
