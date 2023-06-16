@@ -67,9 +67,9 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
       floatingActionButton: ElevatedButton(
         style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all(Color.fromARGB(255, 81, 165, 92)),
+              MaterialStateProperty.all(Color.fromARGB(255, 108, 151, 243)),
           overlayColor:
-              MaterialStateProperty.all(Color.fromARGB(255, 56, 114, 64)),
+              MaterialStateProperty.all(Color.fromARGB(255, 82, 115, 185)),
         ),
         onPressed: () {
           createNewSupply();
@@ -122,19 +122,35 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           "deleteColumn": 4,
         };
 
+        var cellColor;
+
+        Color defaultCellsColor(Set<MaterialState> states) {
+          return Color.fromARGB(255, 151, 208, 212);
+        }
+
+        Color newProductCellsColor(Set<MaterialState> states) {
+          return Color.fromARGB(255, 224, 167, 121);
+        }
+
+        if (supply.name == "Новый продукт") {
+          cellColor = MaterialStateProperty.resolveWith(newProductCellsColor);
+        } else {
+          cellColor = MaterialStateProperty.resolveWith(defaultCellsColor);
+        }
+
         return DataRow(
-          cells: Utils.modelBuilder(cells, (index, cell) {
-            if (index == columnIndexes["nameColumn"]! ||
-                index == columnIndexes["priceColumn"]! ||
-                index == columnIndexes["cookTimeColumn"]!) {
-              return getEditSupplyCell(supply, cell, index);
-            } else if (index == columnIndexes["categoryColumn"]!) {
-              return getDropdownCategoriesCell(supply);
-            } else {
-              return getDeleteSupplyCell(supply);
-            }
-          }),
-        );
+            cells: Utils.modelBuilder(cells, (index, cell) {
+              if (index == columnIndexes["nameColumn"]! ||
+                  index == columnIndexes["priceColumn"]! ||
+                  index == columnIndexes["cookTimeColumn"]!) {
+                return getEditSupplyCell(supply, cell, index);
+              } else if (index == columnIndexes["categoryColumn"]!) {
+                return getDropdownCategoriesCell(supply);
+              } else {
+                return getDeleteSupplyCell(supply);
+              }
+            }),
+            color: cellColor);
       }).toList();
 
   DataCell getEditSupplyCell(Supply supply, Object cell, int rowIndex) {
@@ -231,13 +247,17 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         return showDialog<String>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
+            backgroundColor: Color.fromARGB(255, 184, 77, 77),
             title: const Text('Ошибка создания продукта'),
             content: const Text(
-                'Продукт наименованием "Новый продукт" уже существует. Переименуйте его, после чего высможете создать ещё один новый продукт.'),
+                'Переименуйте "Новый продукт", после чего высможете создать ещё один новый продукт.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context, 'назад'),
-                child: const Text('назад'),
+                child: const Text(
+                  'назад',
+                  style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                ),
               ),
             ],
           ),
@@ -250,29 +270,44 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
     });
   }
 
-  Future editSupplyCategoryId(Supply editSupply) async {
-    updateOrder(Supply supply) async {
-      Supply updatedSupply = await RemotesService().updateSupply(editSupply);
-      return updatedSupply;
-    }
-
-    setState(() {
-      updateOrder(editSupply);
-    });
-  }
-
   Future editSupplyName(Supply editedSupply) async {
     final name = await showTextDialog(
       context,
       title: "Измените название блюда",
       value: editedSupply.name,
     );
+
     updateSupply(Supply supply) async {
+      Supply updatedSupply;
+
       if (name == null) {
         return null;
       }
-      supply.name = name;
-      Supply updatedSupply = await RemotesService().updateSupply(supply);
+
+      try {
+        supply.name = name;
+        updatedSupply = await RemotesService().updateSupply(supply);
+      } catch (e) {
+        return showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            backgroundColor: Color.fromARGB(255, 184, 77, 77),
+            title: const Text('Ошибка переименования продукта'),
+            content: const Text(
+                'Повторение имени продукта исключено. Выберите другое имя.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'назад'),
+                child: const Text(
+                  'назад',
+                  style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
       return updatedSupply;
     }
 
@@ -284,6 +319,17 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
 
         return isEditedSupply ? supply.copy(name: name) : supply;
       }).toList();
+    });
+  }
+
+  Future editSupplyCategoryId(Supply editSupply) async {
+    updateOrder(Supply supply) async {
+      Supply updatedSupply = await RemotesService().updateSupply(editSupply);
+      return updatedSupply;
+    }
+
+    setState(() {
+      updateOrder(editSupply);
     });
   }
 
