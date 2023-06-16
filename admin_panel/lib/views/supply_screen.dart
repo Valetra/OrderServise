@@ -27,11 +27,11 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
 
   @override
   void initState() {
-    super.initState();
-
     //Fetch data from API
     getSupplies();
     getCategories();
+
+    super.initState();
   }
 
   getSupplies() async {
@@ -64,6 +64,22 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         title: Text(args.title),
       ),
       body: ScrollableWidget(child: buildDataTable()),
+      floatingActionButton: ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor:
+              MaterialStateProperty.all(Color.fromARGB(255, 91, 167, 255)),
+          overlayColor: MaterialStateProperty.all(Colors.red),
+        ),
+        onPressed: () {
+          createNewSupply();
+        },
+        child: const Icon(
+          Icons.add,
+          size: 22,
+          color: Color.fromARGB(255, 255, 255, 255),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 
@@ -145,6 +161,23 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           }),
         );
       }).toList();
+
+  Future createNewSupply() async {
+    createSupply() async {
+      Supply newSupply = Supply(
+          name: "Новый продукт",
+          price: 0,
+          cookingTime: "00:00:00",
+          categoryId:
+              categories.where((c) => c.name == "Нет категории").first.id);
+
+      return await RemotesService().createSupply(newSupply);
+    }
+
+    setState(() {
+      createSupply();
+    });
+  }
 
   Future editSupplyCategoryId(Supply editSupply) async {
     updateOrder(Supply supply) async {

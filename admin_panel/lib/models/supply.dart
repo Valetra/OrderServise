@@ -12,7 +12,7 @@ Supply supplyFromJson(String str) => Supply.fromJson(json.decode(str));
 String orderToJson(Supply data) => json.encode(data.toJson());
 
 class Supply {
-  Guid id;
+  Guid? id;
   String name;
   dynamic count;
   int price;
@@ -20,7 +20,7 @@ class Supply {
   Guid categoryId;
 
   Supply({
-    required this.id,
+    this.id,
     required this.name,
     this.count,
     required this.price,
