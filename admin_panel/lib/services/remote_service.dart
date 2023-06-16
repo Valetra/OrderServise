@@ -1,6 +1,8 @@
 import 'package:admin_panel/Models/order.dart';
 import 'package:admin_panel/models/category.dart';
 import 'package:admin_panel/models/supply.dart';
+import 'package:flutter_guid/flutter_guid.dart';
+
 import 'package:http/http.dart' as http;
 
 class RemotesService {
@@ -20,6 +22,19 @@ class RemotesService {
       return supplyFromJson(json);
     }
     throw Exception("Nothing to return.");
+  }
+
+  Future deleteSupply(Guid supplyId) async {
+    var client = http.Client();
+
+    var uri = Uri.parse('http://localhost:5132/supply/$supplyId');
+
+    var response =
+        await client.delete(uri, headers: {'Content-Type': 'application/json'});
+
+    if (response.statusCode != 204) {
+      throw Exception("Nothing to return.");
+    }
   }
 
   Future<List<Order>> getOrderList() async {

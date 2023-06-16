@@ -84,7 +84,13 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
   }
 
   Widget buildDataTable() {
-    final columns = ['Название', 'Цена', 'Время приготовления', 'Категория'];
+    final columns = [
+      'Название',
+      'Цена',
+      'Время приготовления',
+      'Категория',
+      'Удалить'
+    ];
 
     return DataTable(
       columns: getColumns(columns),
@@ -103,12 +109,13 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           supply.name,
           supply.price,
           supply.cookingTime,
-          supply.categoryId
+          supply.categoryId,
+          "Удалить"
         ];
 
         return DataRow(
           cells: Utils.modelBuilder(cells, (index, cell) {
-            if (index != 3) {
+            if (index >= 0 && index <= 2) {
               return DataCell(
                 Text('$cell'),
                 showEditIcon: true,
@@ -125,6 +132,25 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
                       break;
                   }
                 },
+              );
+            } else if (index == 4) {
+              return DataCell(
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        Color.fromARGB(255, 255, 255, 255)),
+                    overlayColor: MaterialStateProperty.all(
+                        Color.fromARGB(255, 255, 90, 90)),
+                  ),
+                  onPressed: () {
+                    deleteSupply(supply);
+                  },
+                  child: const Icon(
+                    Icons.delete,
+                    size: 22,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ),
               );
             } else {
               return DataCell(
@@ -161,6 +187,16 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           }),
         );
       }).toList();
+
+  Future deleteSupply(Supply supply) async {
+    deleteSupply(Guid supplyId) async {
+      return await RemotesService().deleteSupply(supplyId);
+    }
+
+    setState(() {
+      deleteSupply(supply.id!);
+    });
+  }
 
   Future createNewSupply() async {
     createSupply() async {
