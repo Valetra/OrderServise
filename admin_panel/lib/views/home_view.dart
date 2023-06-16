@@ -1,6 +1,6 @@
-import 'package:admin_panel/views/order_screen.dart';
-import 'package:admin_panel/services/screen_arguments.dart';
-import 'package:admin_panel/views/supply_screen.dart';
+import 'package:admin_panel/views/order_view.dart';
+import 'package:admin_panel/services/view_arguments.dart';
+import 'package:admin_panel/views/supply_view.dart';
 
 import 'package:flutter/material.dart';
 
@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.pushNamed(
                 context,
                 OrdersScreen.routeName,
-                arguments: ScreenArguments(orderTitle,
+                arguments: ViewArguments(orderTitle,
                     "TODO: add order screen with data here", bgColor),
               );
             },
@@ -40,7 +40,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.pushNamed(
                 context,
                 SuppliesScreen.routeName,
-                arguments: ScreenArguments(supplyTitle,
+                arguments: ViewArguments(supplyTitle,
                     "TODO: add supply screen with data here", bgColor),
               );
             },

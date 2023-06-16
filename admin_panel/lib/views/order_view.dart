@@ -1,6 +1,6 @@
 import 'package:admin_panel/Models/order.dart';
 import 'package:admin_panel/services/remote_service.dart';
-import 'package:admin_panel/services/screen_arguments.dart';
+import 'package:admin_panel/services/view_arguments.dart';
 import 'package:admin_panel/widgets/scrollable_widget.dart';
 import 'package:admin_panel/utils.dart';
 
@@ -38,7 +38,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 //
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
+    final args = ModalRoute.of(context)!.settings.arguments as ViewArguments;
 
     return Scaffold(
       appBar: AppBar(

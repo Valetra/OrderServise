@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ScreenArguments {
+class ViewArguments {
   final String title;
   final String message;
   final Color backgroundColor;
 
-  ScreenArguments(this.title, this.message, this.backgroundColor);
+  ViewArguments(this.title, this.message, this.backgroundColor);
 }

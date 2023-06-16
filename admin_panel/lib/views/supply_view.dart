@@ -1,5 +1,5 @@
 import 'package:admin_panel/models/category.dart';
-import 'package:admin_panel/services/screen_arguments.dart';
+import 'package:admin_panel/services/view_arguments.dart';
 import 'package:admin_panel/models/supply.dart';
 import 'package:admin_panel/services/remote_service.dart';
 import 'package:admin_panel/widgets/scrollable_widget.dart';
@@ -56,7 +56,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
+    final args = ModalRoute.of(context)!.settings.arguments as ViewArguments;
 
     return Scaffold(
       appBar: AppBar(
@@ -67,8 +67,9 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
       floatingActionButton: ElevatedButton(
         style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all(Color.fromARGB(255, 91, 167, 255)),
-          overlayColor: MaterialStateProperty.all(Colors.red),
+              MaterialStateProperty.all(Color.fromARGB(255, 81, 165, 92)),
+          overlayColor:
+              MaterialStateProperty.all(Color.fromARGB(255, 56, 114, 64)),
         ),
         onPressed: () {
           createNewSupply();
@@ -113,80 +114,97 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           "Удалить"
         ];
 
+        Map<String, num> columnIndexes = {
+          "nameColumn": 0,
+          "priceColumn": 1,
+          "cookTimeColumn": 2,
+          "categoryColumn": 3,
+          "deleteColumn": 4,
+        };
+
         return DataRow(
           cells: Utils.modelBuilder(cells, (index, cell) {
-            if (index >= 0 && index <= 2) {
-              return DataCell(
-                Text('$cell'),
-                showEditIcon: true,
-                onTap: () {
-                  switch (index) {
-                    case 0:
-                      editSupplyName(supply);
-                      break;
-                    case 1:
-                      editSupplyPrice(supply);
-                      break;
-                    case 2:
-                      editSupplyCookingTime(supply);
-                      break;
-                  }
-                },
-              );
-            } else if (index == 4) {
-              return DataCell(
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        Color.fromARGB(255, 255, 255, 255)),
-                    overlayColor: MaterialStateProperty.all(
-                        Color.fromARGB(255, 255, 90, 90)),
-                  ),
-                  onPressed: () {
-                    deleteSupply(supply);
-                  },
-                  child: const Icon(
-                    Icons.delete,
-                    size: 22,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ),
-              );
+            if (index == columnIndexes["nameColumn"]! ||
+                index == columnIndexes["priceColumn"]! ||
+                index == columnIndexes["cookTimeColumn"]!) {
+              return getEditSupplyCell(supply, cell, index);
+            } else if (index == columnIndexes["categoryColumn"]!) {
+              return getDropdownCategoriesCell(supply);
             } else {
-              return DataCell(
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Select an item',
-                    suffixIcon: DropdownButtonFormField(
-                      dropdownColor: const Color.fromARGB(255, 190, 190, 190),
-                      value: categories
-                          .where((c) => c.id == supply.categoryId)
-                          .first
-                          .name,
-                      onChanged: (newValue) {
-                        setState(() {
-                          supply.categoryId = categories
-                              .where((c) => c.name == newValue)
-                              .first
-                              .id;
-                          editSupplyCategoryId(supply);
-                        });
-                      },
-                      items: categoryNames
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              );
+              return getDeleteSupplyCell(supply);
             }
           }),
         );
       }).toList();
+
+  DataCell getEditSupplyCell(Supply supply, Object cell, int rowIndex) {
+    return DataCell(
+      Text('$cell'),
+      showEditIcon: true,
+      onTap: () {
+        switch (rowIndex) {
+          case 0:
+            editSupplyName(supply);
+            break;
+          case 1:
+            editSupplyPrice(supply);
+            break;
+          case 2:
+            editSupplyCookingTime(supply);
+            break;
+        }
+      },
+    );
+  }
+
+  DataCell getDeleteSupplyCell(Supply supply) {
+    return DataCell(
+      ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor:
+              MaterialStateProperty.all(Color.fromARGB(255, 255, 255, 255)),
+          overlayColor:
+              MaterialStateProperty.all(Color.fromARGB(255, 255, 90, 90)),
+        ),
+        onPressed: () {
+          deleteSupply(supply);
+        },
+        child: const Icon(
+          Icons.delete,
+          size: 22,
+          color: Color.fromARGB(255, 0, 0, 0),
+        ),
+      ),
+    );
+  }
+
+  DataCell getDropdownCategoriesCell(Supply supply) {
+    return DataCell(
+      TextField(
+        decoration: InputDecoration(
+          labelText: 'Select an item',
+          suffixIcon: DropdownButtonFormField(
+            dropdownColor: const Color.fromARGB(255, 190, 190, 190),
+            value:
+                categories.where((c) => c.id == supply.categoryId).first.name,
+            onChanged: (newValue) {
+              setState(() {
+                supply.categoryId =
+                    categories.where((c) => c.name == newValue).first.id;
+                editSupplyCategoryId(supply);
+              });
+            },
+            items: categoryNames.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
 
   Future deleteSupply(Supply supply) async {
     deleteSupply(Guid supplyId) async {
@@ -207,7 +225,24 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           categoryId:
               categories.where((c) => c.name == "Нет категории").first.id);
 
-      return await RemotesService().createSupply(newSupply);
+      try {
+        await RemotesService().createSupply(newSupply);
+      } catch (e) {
+        return showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Ошибка создания продукта'),
+            content: const Text(
+                'Продукт наименованием "Новый продукт" уже существует. Переименуйте его, после чего высможете создать ещё один новый продукт.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'назад'),
+                child: const Text('назад'),
+              ),
+            ],
+          ),
+        );
+      }
     }
 
     setState(() {

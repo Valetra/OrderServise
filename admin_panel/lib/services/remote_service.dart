@@ -6,7 +6,7 @@ import 'package:flutter_guid/flutter_guid.dart';
 import 'package:http/http.dart' as http;
 
 class RemotesService {
-  Future<Supply> createSupply(Supply supply) async {
+  Future createSupply(Supply supply) async {
     var client = http.Client();
 
     String jsonRequest =
@@ -16,12 +16,9 @@ class RemotesService {
     var response = await client.post(uri,
         headers: {'Content-Type': 'application/json'}, body: jsonRequest);
 
-    if (response.statusCode == 201) {
-      var json = response.body;
-
-      return supplyFromJson(json);
+    if (response.statusCode != 201) {
+      throw Exception("Name repeat exception");
     }
-    throw Exception("Nothing to return.");
   }
 
   Future deleteSupply(Guid supplyId) async {
@@ -97,8 +94,9 @@ class RemotesService {
       var json = response.body;
 
       return supplyFromJson(json);
+    } else {
+      throw Exception("Name repeat exception");
     }
-    throw Exception(response.reasonPhrase);
   }
 
   Future<List<Category>> getCategoryList() async {
