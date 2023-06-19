@@ -8,12 +8,12 @@ import 'package:admin_panel/widgets/text_dialog_widget.dart';
 import 'package:flutter_guid/flutter_guid.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class SuppliesScreen extends StatefulWidget {
   const SuppliesScreen({super.key});
 
   static const routeName = '/supplies';
+
   @override
   State<SuppliesScreen> createState() => _SuppliesScreenState();
 }
@@ -23,35 +23,31 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
   List<Category> categories = List.empty();
   List<String> categoryNames = List.empty(growable: true);
 
-  bool isLoaded = false;
-
   @override
   void initState() {
-    //Fetch data from API
-    getSupplies();
-    getCategories();
-
+    initializeData();
     super.initState();
   }
 
-  getSupplies() async {
-    supplies = await RemotesService().getSupplyList();
+  initializeData() async {
+    supplies = await getSupplies();
+    categories = await getCategories();
 
-    setState(() {
-      isLoaded = true;
-    });
+    setState(() {});
   }
 
-  getCategories() async {
+  Future<List<Supply>> getSupplies() async {
+    return await RemotesService().getSupplyList();
+  }
+
+  Future<List<Category>> getCategories() async {
     categories = await RemotesService().getCategoryList();
 
     for (var category in categories) {
       categoryNames.add(category.name);
     }
 
-    setState(() {
-      isLoaded = true;
-    });
+    return categories;
   }
 
   @override
@@ -71,7 +67,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           overlayColor:
               MaterialStateProperty.all(Color.fromARGB(255, 82, 115, 185)),
         ),
-        onPressed: () {
+        onPressed: () async {
           createNewSupply();
         },
         child: const Icon(
@@ -229,18 +225,19 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
 
     setState(() {
       deleteSupply(supply.id!);
+      supplies.remove(supply);
     });
   }
 
-  Future createNewSupply() async {
-    createSupply() async {
-      Supply newSupply = Supply(
-          name: "Новый продукт",
-          price: 0,
-          cookingTime: "00:00:00",
-          categoryId:
-              categories.where((c) => c.name == "Нет категории").first.id);
+  createNewSupply() async {
+    Supply newSupply = Supply(
+        name: "Новый продукт",
+        price: 0,
+        cookingTime: "00:00:00",
+        categoryId:
+            categories.where((c) => c.name == "Нет категории").first.id);
 
+    createSupply() async {
       try {
         await RemotesService().createSupply(newSupply);
       } catch (e) {
@@ -265,9 +262,10 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
       }
     }
 
-    setState(() {
-      createSupply();
-    });
+    await createSupply();
+    supplies = await getSupplies();
+
+    setState(() {});
   }
 
   Future editSupplyName(Supply editedSupply) async {

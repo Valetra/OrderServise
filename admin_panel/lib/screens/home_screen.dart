@@ -1,12 +1,17 @@
-import 'package:admin_panel/views/order_view.dart';
+import 'package:admin_panel/screens/order_screen.dart';
 import 'package:admin_panel/services/view_arguments.dart';
-import 'package:admin_panel/views/supply_view.dart';
+import 'package:admin_panel/screens/supply_screen.dart';
 
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final ButtonStyle style = TextButton.styleFrom(
