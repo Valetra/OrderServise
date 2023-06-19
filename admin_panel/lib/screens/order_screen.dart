@@ -6,6 +6,13 @@ import 'package:admin_panel/utils.dart';
 
 import 'package:flutter/material.dart';
 
+class OrderStatus {
+  final String value;
+  final String label;
+
+  OrderStatus(this.value, this.label) {}
+}
+
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
 
@@ -17,7 +24,6 @@ class OrdersScreen extends StatefulWidget {
 
 class _OrdersScreenState extends State<OrdersScreen> {
   List<Order> orders = List.empty();
-  bool isLoaded = false;
 
   @override
   void initState() {
@@ -28,10 +34,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   getOrders() async {
-    orders = await RemotesService().getOrderList();
+    List<Order> fetchedOrders = await RemotesService().getOrderList();
 
     setState(() {
-      isLoaded = true;
+      orders = fetchedOrders;
     });
   }
 
@@ -51,7 +57,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   Widget buildDataTable() {
     final columns = ['Номер заказа', 'Статус заказа', 'Оплата'];
-    mapIterator = 1;
+
     return DataTable(
       columns: getColumns(columns),
       rows: getRows(orders),
@@ -64,51 +70,70 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ))
       .toList();
 
-  List<String> statuses = [
-    "Unconfirmed",
-    "Confirmed",
-    "In progres",
-    "Done",
-    "Cancelled"
+  List<OrderStatus> statuses = [
+    new OrderStatus("Unconfirmed", "Не подтверждён"),
+    new OrderStatus("Confirmed", "Подтверждён"),
+    new OrderStatus("In progres", "В процессе"),
+    new OrderStatus("Done", "Готов"),
+    new OrderStatus("Cancelled", "Отменён"),
   ];
 
-  int mapIterator = 1;
   List<DataRow> getRows(List<Order> orders) => orders.map((Order order) {
-        var cells = [order.id, order.status, order.payed];
+        var index = orders.indexOf(order) + 1;
 
         return DataRow(
-          cells: Utils.modelBuilder(cells, (index, cell) {
-            if (index == 0) {
-              return DataCell(Text('${mapIterator++}'));
-            } else if (index == 2) {
-              return DataCell(Text('$cell'));
-            } else {
-              return DataCell(
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Select an item',
-                    suffixIcon: DropdownButtonFormField(
-                      dropdownColor: const Color.fromARGB(255, 190, 190, 190),
-                      value: order.status,
-                      onChanged: (newValue) {
-                        setState(() {
-                          order.status = newValue.toString();
-                          editOrderStatus(order);
-                        });
-                      },
-                      items: statuses
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
+          cells: [
+            DataCell(
+              Text('$index'),
+              onTap: () {
+                //Allert window with order content
+                showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    backgroundColor: Color.fromARGB(255, 187, 196, 111),
+                    title: Text(
+                        'Содержимое заказа №$index'), //Как вытащить номер заказа?!
+                    content: const Text('Здесь должно быть содержимое заказа.'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, 'назад'),
+                        child: const Text(
+                          'назад',
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255)),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            DataCell(
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Select an item',
+                  suffixIcon: DropdownButtonFormField(
+                    dropdownColor: const Color.fromARGB(255, 190, 190, 190),
+                    value: order.status,
+                    onChanged: (newValue) {
+                      setState(() {
+                        order.status = newValue.toString();
+                        editOrderStatus(order);
+                      });
+                    },
+                    items: statuses
+                        .map<DropdownMenuItem<String>>((OrderStatus status) {
+                      return DropdownMenuItem<String>(
+                        value: status.value,
+                        child: Text(status.label),
+                      );
+                    }).toList(),
                   ),
                 ),
-              );
-            }
-          }),
+              ),
+            ),
+            DataCell(Text(order.payed ? 'Оплачено' : 'Не оплачено')),
+          ],
         );
       }).toList();
 

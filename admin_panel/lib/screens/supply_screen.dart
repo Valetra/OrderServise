@@ -21,7 +21,6 @@ class SuppliesScreen extends StatefulWidget {
 class _SuppliesScreenState extends State<SuppliesScreen> {
   List<Supply> supplies = List.empty();
   List<Category> categories = List.empty();
-  List<String> categoryNames = List.empty(growable: true);
 
   @override
   void initState() {
@@ -41,13 +40,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
   }
 
   Future<List<Category>> getCategories() async {
-    categories = await RemotesService().getCategoryList();
-
-    for (var category in categories) {
-      categoryNames.add(category.name);
-    }
-
-    return categories;
+    return await RemotesService().getCategoryList();
   }
 
   @override
@@ -206,10 +199,11 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
                 editSupplyCategoryId(supply);
               });
             },
-            items: categoryNames.map<DropdownMenuItem<String>>((String value) {
+            items:
+                categories.map<DropdownMenuItem<String>>((Category category) {
               return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+                value: category.name,
+                child: Text(category.name),
               );
             }).toList(),
           ),

@@ -4,18 +4,14 @@ import 'package:admin_panel/screens/supply_screen.dart';
 
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
   Widget build(BuildContext context) {
     final ButtonStyle style = TextButton.styleFrom(
-        foregroundColor: Theme.of(context).colorScheme.onPrimary);
+      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+    );
 
     const String orderTitle = "Заказы";
     const String supplyTitle = "Блюда";
@@ -33,8 +29,11 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pushNamed(
                 context,
                 OrdersScreen.routeName,
-                arguments: ViewArguments(orderTitle,
-                    "TODO: add order screen with data here", bgColor),
+                arguments: ViewArguments(
+                  orderTitle,
+                  "TODO: add order screen with data here",
+                  bgColor,
+                ),
               );
             },
             child: const Text(orderTitle),
@@ -45,8 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pushNamed(
                 context,
                 SuppliesScreen.routeName,
-                arguments: ViewArguments(supplyTitle,
-                    "TODO: add supply screen with data here", bgColor),
+                arguments: ViewArguments(
+                  supplyTitle,
+                  "TODO: add supply screen with data here",
+                  bgColor,
+                ),
               );
             },
             child: const Text('Блюда'),
