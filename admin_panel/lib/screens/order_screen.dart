@@ -9,7 +9,7 @@ class OrderStatus {
   final String value;
   final String label;
 
-  OrderStatus(this.value, this.label) {}
+  OrderStatus(this.value, this.label);
 }
 
 class OrdersScreen extends StatefulWidget {
@@ -55,7 +55,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   Widget buildDataTable() {
-    final columns = ['Номер заказа', 'Статус заказа', 'Оплата'];
+    final columns = [
+      'Номер заказа',
+      'Статус заказа',
+      'Оплата',
+      'Содержимое заказа'
+    ];
 
     return DataTable(
       columns: getColumns(columns),
@@ -80,19 +85,44 @@ class _OrdersScreenState extends State<OrdersScreen> {
   List<DataRow> getRows(List<Order> orders) => orders.map((Order order) {
         var index = orders.indexOf(order) + 1;
 
+        dynamic cellColor;
+
+        Color payedCellsColor(Set<MaterialState> states) {
+          return Color.fromARGB(255, 151, 212, 169);
+        }
+
+        Color notPayedCellsColor(Set<MaterialState> states) {
+          return Color.fromARGB(255, 224, 183, 148);
+        }
+
+        if (!order.payed) {
+          cellColor = MaterialStateProperty.resolveWith(notPayedCellsColor);
+        } else {
+          cellColor = MaterialStateProperty.resolveWith(payedCellsColor);
+        }
+
         return DataRow(
           cells: [
             getOrderIndexCell(index),
             getOrderStatuCell(order),
             DataCell(Text(order.payed ? 'Оплачено' : 'Не оплачено')),
+            getOrderContentCell(index),
           ],
+          color: cellColor,
         );
       }).toList();
 
-  DataCell getOrderIndexCell(int rowIndex) {
+  DataCell getOrderContentCell(int rowIndex) {
     return DataCell(
-      Text('$rowIndex'),
+      const Center(
+        child: Icon(
+          Icons.format_list_bulleted,
+          size: 22,
+          color: Color.fromARGB(255, 78, 76, 76),
+        ),
+      ),
       onTap: () {
+        //show
         //Allert window with order content
         showDialog<String>(
           context: context,
@@ -114,6 +144,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
         );
       },
     );
+  }
+
+  DataCell getOrderIndexCell(int rowIndex) {
+    return DataCell(Text('$rowIndex'));
   }
 
   DataCell getOrderStatuCell(Order order) {

@@ -111,7 +111,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           "deleteColumn": 4,
         };
 
-        var cellColor;
+        dynamic cellColor;
 
         Color defaultCellsColor(Set<MaterialState> states) {
           return Color.fromARGB(255, 151, 208, 212);
