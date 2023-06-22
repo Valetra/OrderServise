@@ -1,4 +1,4 @@
-#Servise for ordering and processing orders.
+# Servise for ordering and processing orders.
 ## This solution have 3 projects that constitutes a full service for creating by customer an order/preorder in cafe and processing it in admin panel.
 ### Service projects: RESTful API(done), ChatBot(done), AdminPanel(in progress).
 
