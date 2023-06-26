@@ -4,6 +4,7 @@ using apiForRadBot.Data.Repositories.Interfaces;
 using apiForRadBot.Data.RequestObject;
 using apiForRadBot.Core.Mapper;
 using apiForRadBot.Data.ResponseObject;
+using System.Data;
 
 namespace apiForRadBot.Core.Services.Implimentations;
 
@@ -43,7 +44,21 @@ public class BotService : IBotService
     public async Task<Order?> GetOrder(Guid id) => await _orderRepository.Get(id);
     public async Task<Order> AddOrder(PostOrderObject order)
     {
+        IEnumerable<Order> allOrders = await _orderRepository.GetAll();
+
+        DateTime today = DateTime.Today;
+
+        int todayOrdersCount = allOrders.Where(o =>
+            o.CreateDateTime.ToLocalTime() >= today &&
+            o.CreateDateTime.ToLocalTime() <= today.AddDays(1))
+            .Count();
+
         Order newOrder = new();
+
+        var newOrderTime = newOrder.CreateDateTime.ToLocalTime();
+
+        newOrder.Number = ++todayOrdersCount;
+
         Order orderEntity = await _orderRepository.Create(newOrder);
 
         foreach (var supplyId in order.SuppliesId)
@@ -72,10 +87,13 @@ public class BotService : IBotService
             }
         }
 
+
         return new ResponseOrderObject
         {
             Status = order.Status,
             Payed = order.Payed,
+            CreateDateTime = order.CreateDateTime,
+            Number = order.Number,
             Supplies = SupplyExtensions.ToResponseSupplies(supplies, categories)
         };
     }
