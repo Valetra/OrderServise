@@ -14,12 +14,16 @@ String orderToJson(Order data) => json.encode(data.toJson());
 class Order {
   String status;
   bool payed;
+  DateTime createDateTime;
+  int number;
   dynamic orderSupply;
   Guid id;
 
   Order({
     required this.status,
     required this.payed,
+    required this.createDateTime,
+    required this.number,
     this.orderSupply,
     required this.id,
   });
@@ -27,6 +31,8 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         status: json["status"],
         payed: json["payed"],
+        createDateTime: DateTime.parse(json["createDateTime"]),
+        number: json["number"],
         orderSupply: json["orderSupply"],
         id: Guid(json["id"]),
       );
@@ -34,6 +40,8 @@ class Order {
   Map<String, dynamic> toJson() => {
         "status": status,
         "payed": payed,
+        "createDateTime": createDateTime.toIso8601String(),
+        "number": number,
         "orderSupply": orderSupply,
         "id": id,
       };

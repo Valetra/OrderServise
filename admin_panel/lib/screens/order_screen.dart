@@ -3,6 +3,7 @@ import 'package:admin_panel/services/remote_service.dart';
 import 'package:admin_panel/services/view_arguments.dart';
 import 'package:admin_panel/widgets/scrollable_widget.dart';
 
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 class OrderStatus {
@@ -55,12 +56,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   Widget buildDataTable() {
-    final columns = [
-      'Номер заказа',
-      'Статус заказа',
-      'Оплата',
-      'Содержимое заказа'
-    ];
+    final columns = ['Номер', 'Статус', 'Оплата', 'Дата и время', 'Содержимое'];
 
     return DataTable(
       columns: getColumns(columns),
@@ -88,11 +84,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
         dynamic cellColor;
 
         Color payedCellsColor(Set<MaterialState> states) {
-          return Color.fromARGB(255, 151, 212, 169);
+          return const Color.fromARGB(255, 151, 212, 169);
         }
 
         Color notPayedCellsColor(Set<MaterialState> states) {
-          return Color.fromARGB(255, 224, 183, 148);
+          return const Color.fromARGB(255, 224, 183, 148);
         }
 
         if (!order.payed) {
@@ -103,14 +99,25 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
         return DataRow(
           cells: [
-            getOrderIndexCell(index),
+            DataCell(Text('${order.number}')),
             getOrderStatuCell(order),
             DataCell(Text(order.payed ? 'Оплачено' : 'Не оплачено')),
+            getOrderDateTime(order),
             getOrderContentCell(index),
           ],
           color: cellColor,
         );
       }).toList();
+
+  DataCell getOrderDateTime(order) {
+    DateFormat dateFormatter = DateFormat('dd.MM.yyyy');
+    DateFormat timeFormatter = DateFormat('Hms');
+
+    String orderDate = dateFormatter.format(order.createDateTime.toLocal());
+    String orderTime = timeFormatter.format(order.createDateTime.toLocal());
+
+    return DataCell(Text('$orderDate\n$orderTime'));
+  }
 
   DataCell getOrderContentCell(int rowIndex) {
     return DataCell(
@@ -144,10 +151,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
         );
       },
     );
-  }
-
-  DataCell getOrderIndexCell(int rowIndex) {
-    return DataCell(Text('$rowIndex'));
   }
 
   DataCell getOrderStatuCell(Order order) {

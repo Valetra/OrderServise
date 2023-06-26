@@ -55,10 +55,10 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
       body: ScrollableWidget(child: buildDataTable()),
       floatingActionButton: ElevatedButton(
         style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all(Color.fromARGB(255, 108, 151, 243)),
-          overlayColor:
-              MaterialStateProperty.all(Color.fromARGB(255, 82, 115, 185)),
+          backgroundColor: MaterialStateProperty.all(
+              const Color.fromARGB(255, 108, 151, 243)),
+          overlayColor: MaterialStateProperty.all(
+              const Color.fromARGB(255, 82, 115, 185)),
         ),
         onPressed: () async {
           createNewSupply();
@@ -114,11 +114,11 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         dynamic cellColor;
 
         Color defaultCellsColor(Set<MaterialState> states) {
-          return Color.fromARGB(255, 151, 208, 212);
+          return const Color.fromARGB(255, 151, 208, 212);
         }
 
         Color newProductCellsColor(Set<MaterialState> states) {
-          return Color.fromARGB(255, 224, 167, 121);
+          return const Color.fromARGB(255, 224, 167, 121);
         }
 
         if (supply.name == "Новый продукт") {
@@ -166,10 +166,10 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
     return DataCell(
       ElevatedButton(
         style: ButtonStyle(
-          backgroundColor:
-              MaterialStateProperty.all(Color.fromARGB(255, 255, 255, 255)),
+          backgroundColor: MaterialStateProperty.all(
+              const Color.fromARGB(255, 255, 255, 255)),
           overlayColor:
-              MaterialStateProperty.all(Color.fromARGB(255, 255, 90, 90)),
+              MaterialStateProperty.all(const Color.fromARGB(255, 255, 90, 90)),
         ),
         onPressed: () {
           deleteSupply(supply);
@@ -238,7 +238,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         return showDialog<String>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-            backgroundColor: Color.fromARGB(255, 184, 77, 77),
+            backgroundColor: const Color.fromARGB(255, 184, 77, 77),
             title: const Text('Ошибка создания продукта'),
             content: const Text(
                 'Переименуйте "Новый продукт", после чего высможете создать ещё один новый продукт.'),
@@ -283,7 +283,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         return showDialog<String>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-            backgroundColor: Color.fromARGB(255, 184, 77, 77),
+            backgroundColor: const Color.fromARGB(255, 184, 77, 77),
             title: const Text('Ошибка переименования продукта'),
             content: const Text(
                 'Повторение имени продукта исключено. Выберите другое имя.'),
