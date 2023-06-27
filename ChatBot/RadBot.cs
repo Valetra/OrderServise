@@ -164,7 +164,7 @@ public class RadBot
             foreach (var supplyGroup in groupedSupplies)
             {
                 string name = supplies.FirstOrDefault(s => s.Id == supplyGroup.Key)?.Name ?? "";
-                suppliesInOrder += $"{name} - {supplyGroup.Count()} шт.";
+                suppliesInOrder += $"{name} - {supplyGroup.Count()} шт.\n";
             }
 
             actionText = $"Подтвердите ваш заказ:\n\n{suppliesInOrder}";
