@@ -136,7 +136,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
         for (var supply in orderSupplies) {
           supplies += '${supply.name} - ${supply.count}шт\n';
-          totalPrice += supply.price;
+          totalPrice += supply.price * supply.count as int;
         }
         supplies += 'Cтоиомсть заказа: $totalPrice';
 
