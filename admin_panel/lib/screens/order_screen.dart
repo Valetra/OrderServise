@@ -1,4 +1,5 @@
 import 'package:admin_panel/Models/order.dart';
+import 'package:admin_panel/models/supply.dart';
 import 'package:admin_panel/services/remote_service.dart';
 import 'package:admin_panel/services/view_arguments.dart';
 import 'package:admin_panel/widgets/scrollable_widget.dart';
@@ -79,8 +80,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
   ];
 
   List<DataRow> getRows(List<Order> orders) => orders.map((Order order) {
-        var index = orders.indexOf(order) + 1;
-
         dynamic cellColor;
 
         Color payedCellsColor(Set<MaterialState> states) {
@@ -103,7 +102,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
             getOrderStatuCell(order),
             DataCell(Text(order.payed ? 'Оплачено' : 'Не оплачено')),
             getOrderDateTime(order),
-            getOrderContentCell(index),
+            getOrderContentCell(order),
           ],
           color: cellColor,
         );
@@ -119,7 +118,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return DataCell(Text('$orderDate\n$orderTime'));
   }
 
-  DataCell getOrderContentCell(int rowIndex) {
+  DataCell getOrderContentCell(Order order) {
     return DataCell(
       const Center(
         child: Icon(
@@ -128,16 +127,25 @@ class _OrdersScreenState extends State<OrdersScreen> {
           color: Color.fromARGB(255, 78, 76, 76),
         ),
       ),
-      onTap: () {
-        //show
-        //Allert window with order content
+      onTap: () async {
+        List<Supply> orderSupplies =
+            await RemotesService().getOrderSupplies(order.id);
+
+        String supplies = '';
+        int totalPrice = 0;
+
+        for (var supply in orderSupplies) {
+          supplies += '${supply.name} - ${supply.count}шт\n';
+          totalPrice += supply.price;
+        }
+        supplies += 'Cтоиомсть заказа: $totalPrice';
+
         showDialog<String>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
             backgroundColor: const Color.fromARGB(255, 187, 196, 111),
-            title: Text(
-                'Содержимое заказа №$rowIndex'), //Как вытащить номер заказа?!
-            content: const Text('Здесь должно быть содержимое заказа.'),
+            title: Text('Содержимое заказа №${order.number}'),
+            content: Text(supplies),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context, 'назад'),

@@ -2,10 +2,27 @@ import 'package:admin_panel/Models/order.dart';
 import 'package:admin_panel/models/category.dart';
 import 'package:admin_panel/models/supply.dart';
 import 'package:flutter_guid/flutter_guid.dart';
+import 'package:admin_panel/models/responceObjects/responseOrderObject.dart';
 
 import 'package:http/http.dart' as http;
 
 class RemotesService {
+  Future<List<Supply>> getOrderSupplies(Guid id) async {
+    var client = http.Client();
+
+    var uri = Uri.parse('http://localhost:5132/order/getOrderWithSupplies/$id');
+    var response = await client.get(uri);
+
+    if (response.statusCode == 200) {
+      var json = response.body;
+
+      var responseOrderObject = responseOrderObjectFromJson(json);
+
+      return responseOrderObject.supplies;
+    }
+    throw Exception("Nothing to return.");
+  }
+
   Future createSupply(Supply supply) async {
     var client = http.Client();
 
