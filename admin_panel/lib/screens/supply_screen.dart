@@ -5,9 +5,9 @@ import 'package:admin_panel/services/remote_service.dart';
 import 'package:admin_panel/widgets/scrollable_widget.dart';
 import 'package:admin_panel/utils.dart';
 import 'package:admin_panel/widgets/text_dialog_widget.dart';
-import 'package:flutter_guid/flutter_guid.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_guid/flutter_guid.dart';
 
 class SuppliesScreen extends StatefulWidget {
   const SuppliesScreen({super.key});
@@ -195,7 +195,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
             onChanged: (newValue) {
               setState(() {
                 supply.categoryId =
-                    categories.where((c) => c.name == newValue).first.id;
+                    categories.where((c) => c.name == newValue).first.id!;
                 editSupplyCategoryId(supply);
               });
             },
@@ -229,7 +229,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         price: 0,
         cookingTime: "00:00:00",
         categoryId:
-            categories.where((c) => c.name == "Нет категории").first.id);
+            categories.where((c) => c.name == "Нет категории").first.id!);
 
     createSupply() async {
       try {

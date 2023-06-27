@@ -1,6 +1,7 @@
 import 'package:admin_panel/screens/order_screen.dart';
 import 'package:admin_panel/services/view_arguments.dart';
 import 'package:admin_panel/screens/supply_screen.dart';
+import 'package:admin_panel/screens/category_screen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,7 @@ class HomeScreen extends StatelessWidget {
 
     const String orderTitle = "Заказы";
     const String supplyTitle = "Блюда";
+    const String categoryTitle = "Категории";
 
     const Color bgColor = Color(0xff201F23);
 
@@ -53,6 +55,21 @@ class HomeScreen extends StatelessWidget {
             },
             child: const Text('Блюда'),
           ),
+          TextButton(
+            style: style,
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                CategoriesScreen.routeName,
+                arguments: ViewArguments(
+                  categoryTitle,
+                  "TODO: add order screen with data here",
+                  bgColor,
+                ),
+              );
+            },
+            child: const Text(categoryTitle),
+          )
         ]),
       ),
       body: const Center(child: Text("TODO: add home screen with data here")),

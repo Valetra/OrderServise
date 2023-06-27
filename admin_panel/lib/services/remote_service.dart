@@ -7,6 +7,51 @@ import 'package:admin_panel/models/responceObjects/responseOrderObject.dart';
 import 'package:http/http.dart' as http;
 
 class RemotesService {
+  Future<Category> updateCategory(Category category) async {
+    var client = http.Client();
+
+    String jsonRequest = '{"id": "${category.id}", "name": "${category.name}"}';
+
+    var uri = Uri.parse('http://localhost:5132/category');
+    var response = await client.put(uri,
+        headers: {'Content-Type': 'application/json'}, body: jsonRequest);
+
+    if (response.statusCode == 200) {
+      var json = response.body;
+
+      return categoryFromJson(json);
+    } else {
+      throw Exception("Name repeat exception");
+    }
+  }
+
+  Future createCategory(Category category) async {
+    var client = http.Client();
+
+    String jsonRequest = '{"name": "${category.name}"}';
+
+    var uri = Uri.parse('http://localhost:5132/category');
+    var response = await client.post(uri,
+        headers: {'Content-Type': 'application/json'}, body: jsonRequest);
+
+    if (response.statusCode != 201) {
+      throw Exception("Name repeat exception");
+    }
+  }
+
+  Future deleteCategory(Guid categoryId) async {
+    var client = http.Client();
+
+    var uri = Uri.parse('http://localhost:5132/category/$categoryId');
+
+    var response =
+        await client.delete(uri, headers: {'Content-Type': 'application/json'});
+
+    if (response.statusCode != 204) {
+      throw Exception("Nothing to return.");
+    }
+  }
+
   Future<List<Supply>> getOrderSupplies(Guid id) async {
     var client = http.Client();
 

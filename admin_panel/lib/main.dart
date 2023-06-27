@@ -1,3 +1,4 @@
+import 'package:admin_panel/screens/category_screen.dart';
 import 'package:admin_panel/screens/home_screen.dart';
 import 'package:admin_panel/screens/order_screen.dart';
 import 'package:admin_panel/screens/supply_screen.dart';
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
       routes: {
         OrdersScreen.routeName: (context) => const OrdersScreen(),
         SuppliesScreen.routeName: (context) => const SuppliesScreen(),
+        CategoriesScreen.routeName: (context) => const CategoriesScreen(),
       },
       title: 'Админ панель',
       home: const HomeScreen(),
