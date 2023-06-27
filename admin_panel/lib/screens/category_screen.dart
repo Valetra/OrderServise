@@ -152,9 +152,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
             backgroundColor: const Color.fromARGB(255, 184, 77, 77),
-            title: const Text('Ошибка создания продукта'),
+            title: const Text('Ошибка создания категории.'),
             content: const Text(
-                'Переименуйте "Нет категории", после чего высможете создать ещё один новый продукт.'),
+                'Переименуйте "Нет категории" для создания следующей.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context, 'назад'),

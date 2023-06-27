@@ -61,7 +61,29 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
               const Color.fromARGB(255, 82, 115, 185)),
         ),
         onPressed: () async {
-          createNewSupply();
+          if (categories.isNotEmpty) {
+            createNewSupply();
+          } else {
+            showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                backgroundColor: const Color.fromARGB(255, 184, 77, 77),
+                title: const Text('Ошибка создания продукта'),
+                content: const Text(
+                    'Создайте хотя бы одну категорию, для создания продукта.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'назад'),
+                    child: const Text(
+                      'назад',
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
         },
         child: const Icon(
           Icons.add,
@@ -228,8 +250,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         name: "Новый продукт",
         price: 0,
         cookingTime: "00:00:00",
-        categoryId:
-            categories.where((c) => c.name == "Нет категории").first.id!);
+        categoryId: categories.first.id!);
 
     createSupply() async {
       try {
