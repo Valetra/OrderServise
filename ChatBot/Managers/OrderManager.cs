@@ -5,14 +5,12 @@ namespace ChatBot.Managers;
 
 internal class OrderManager
 {
-    public static async Task PostOrderToAPI(string apiPath, Order order)
+    public static async Task PostOrderToAPI(ControllerManager controllerManager, Order order)
     {
-        string controllerName = "order";
-
         HttpClient httpClient = new HttpClient();
 
         JsonContent content = JsonContent.Create(order);
 
-        using var response = await httpClient.PostAsync(apiPath + controllerName, content);
+        using var response = await httpClient.PostAsync(controllerManager.GetOrderURL(), content);
     }
 }

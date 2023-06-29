@@ -3,15 +3,14 @@ using Models;
 using Newtonsoft.Json;
 
 namespace ChatBot.Managers;
+
 public class SupplyManager
 {
-    public static async Task<List<ISupply>> GetSuppliesFromAPI(string apiPath)
+    public static async Task<List<ISupply>> GetSuppliesFromAPI(ControllerManager controllerManager)
     {
-        string controllerName = "supply";
-
         HttpClient httpClient = new HttpClient();
 
-        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, apiPath + controllerName);
+        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, controllerManager.GetSupplyURL());
 
         using HttpResponseMessage response = await httpClient.SendAsync(request);
 

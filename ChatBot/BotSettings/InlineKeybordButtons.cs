@@ -2,12 +2,12 @@
 using Models;
 using System.Collections.Generic;
 using Telegram.Bot.Types.ReplyMarkups;
+using ChatBot.Managers;
 
 namespace BotSettings;
 
 public class InlineKeyboardButtons
 {
-    private readonly string _apiPath;
     private readonly Order _order;
     private readonly List<ICategory> _categories;
     private readonly List<ISupply> _supplies;
@@ -27,9 +27,8 @@ public class InlineKeyboardButtons
         InlineKeyboardButton.WithCallbackData(text: "Подтвердить заказ", callbackData: "confirm")
     };
 
-    public InlineKeyboardButtons(string apiPath, List<ICategory> categories, List<ISupply> supplies, Order order)
+    public InlineKeyboardButtons(List<ICategory> categories, List<ISupply> supplies, Order order)
     {
-        _apiPath = apiPath;
         _categories = categories;
         _supplies = supplies;
         _order = order;

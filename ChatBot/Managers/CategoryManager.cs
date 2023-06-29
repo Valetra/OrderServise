@@ -6,13 +6,11 @@ namespace ChatBot.Managers;
 
 public class CategoryManager
 {
-    public static async Task<List<ICategory>> GetCategoriesFromAPI(string apiPath)
+    public static async Task<List<ICategory>> GetCategoriesFromAPI(ControllerManager controllerManager)
     {
-        string controllerName = "category";
-
         HttpClient httpClient = new HttpClient();
 
-        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, apiPath + controllerName);
+        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, controllerManager.GetCategoryURL());
 
         using HttpResponseMessage response = await httpClient.SendAsync(request);
 
