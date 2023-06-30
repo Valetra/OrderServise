@@ -37,6 +37,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
   getOrders() async {
     List<Order> fetchedOrders = await RemotesService().getOrderList();
 
+    fetchedOrders.sort((a, b) {
+      //sorting in ascending order
+      return a.createDateTime.compareTo(b.createDateTime);
+    });
+
     setState(() {
       orders = fetchedOrders;
     });
@@ -138,7 +143,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
           supplies += '${supply.name} - ${supply.count}шт\n';
           totalPrice += supply.price * supply.count as int;
         }
-        supplies += 'Cтоиомсть заказа: $totalPrice';
+        supplies += 'Итого: $totalPrice₽';
 
         showDialog<String>(
           context: context,
