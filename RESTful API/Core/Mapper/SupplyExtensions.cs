@@ -1,8 +1,8 @@
-﻿using apiForRadBot.Data.Models;
-using apiForRadBot.Data.ResponseObject;
+﻿using RESTful_API.Data.Models;
+using RESTful_API.Data.ResponseObject;
 using Contracts;
 
-namespace apiForRadBot.Core.Mapper;
+namespace RESTful_API.Core.Mapper;
 
 public class SupplyExtensions
 {

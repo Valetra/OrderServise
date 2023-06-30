@@ -1,10 +1,10 @@
-﻿using apiForRadBot.Core.Services.Interfaces;
-using apiForRadBot.Data.Models;
-using apiForRadBot.Data.RequestObject;
+﻿using RESTful_API.Core.Services.Interfaces;
+using RESTful_API.Data.Models;
+using RESTful_API.Data.RequestObject;
 using Microsoft.AspNetCore.Mvc;
-using apiForRadBot.Data.ResponseObject;
+using RESTful_API.Data.ResponseObject;
 
-namespace apiForRadBot.Controllers;
+namespace RESTful_API.Controllers;
 
 [Route("[controller]")]
 [ApiController]

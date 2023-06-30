@@ -1,7 +1,7 @@
-﻿using apiForRadBot.Data.Models;
-using apiForRadBot.Data.RequestObject;
+﻿using RESTful_API.Data.Models;
+using RESTful_API.Data.RequestObject;
 
-namespace apiForRadBot.Core.Mapper;
+namespace RESTful_API.Core.Mapper;
 
 public static class CategoryExtensions
 {

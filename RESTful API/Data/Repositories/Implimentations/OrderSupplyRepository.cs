@@ -1,8 +1,8 @@
-﻿using apiForRadBot.Data.Models;
-using apiForRadBot.Data.Repositories.Interfaces;
+﻿using RESTful_API.Data.Models;
+using RESTful_API.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace apiForRadBot.Data.Repositories.Implimentations;
+namespace RESTful_API.Data.Repositories.Implimentations;
 
 public class OrderSupplyRepository : BaseRepository<OrderSupply>, IOrderSupplyRepository
 {

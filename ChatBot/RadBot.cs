@@ -111,10 +111,10 @@ public class RadBot
             }
         }
         if (update.CallbackQuery != null && update.CallbackQuery.Data != "notButton")
-            await HandleCallbackQuery(botClient, update.CallbackQuery, _chatId, cancellationToken);
+            await HandleCallbackQuery(botClient, update.CallbackQuery, cancellationToken);
     }
 
-    private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, long chatId, CancellationToken cancellationToken)
+    private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
     {
         string? callbackData = callbackQuery.Data;
         string actionText = "";

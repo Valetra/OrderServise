@@ -1,5 +1,5 @@
-﻿using apiForRadBot.Data.Models.Base;
-namespace apiForRadBot.Data.Repositories.Interfaces;
+﻿using RESTful_API.Data.Models.Base;
+namespace RESTful_API.Data.Repositories.Interfaces;
 
 public interface IBaseRepository<TDbModel> where TDbModel : BaseModel
 {

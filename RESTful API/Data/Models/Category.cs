@@ -1,7 +1,7 @@
-﻿using apiForRadBot.Data.Models.Base;
+﻿using RESTful_API.Data.Models.Base;
 using Microsoft.EntityFrameworkCore;
 
-namespace apiForRadBot.Data.Models;
+namespace RESTful_API.Data.Models;
 
 [Index(nameof(Name), IsUnique = true)]
 public class Category : BaseModel

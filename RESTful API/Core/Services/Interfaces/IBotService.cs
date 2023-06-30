@@ -1,8 +1,8 @@
-﻿using apiForRadBot.Data.Models;
-using apiForRadBot.Data.RequestObject;
-using apiForRadBot.Data.ResponseObject;
+﻿using RESTful_API.Data.Models;
+using RESTful_API.Data.RequestObject;
+using RESTful_API.Data.ResponseObject;
 
-namespace apiForRadBot.Core.Services.Interfaces;
+namespace RESTful_API.Core.Services.Interfaces;
 
 public interface IBotService
 {

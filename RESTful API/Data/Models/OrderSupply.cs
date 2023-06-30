@@ -1,6 +1,6 @@
-﻿using apiForRadBot.Data.Models.Base;
+﻿using RESTful_API.Data.Models.Base;
 
-namespace apiForRadBot.Data.Models;
+namespace RESTful_API.Data.Models;
 
 public class OrderSupply : BaseModel
 {

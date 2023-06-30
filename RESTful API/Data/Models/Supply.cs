@@ -1,7 +1,7 @@
-﻿using apiForRadBot.Data.Models.Base;
+﻿using RESTful_API.Data.Models.Base;
 using Microsoft.EntityFrameworkCore;
 
-namespace apiForRadBot.Data.Models;
+namespace RESTful_API.Data.Models;
 
 public class Supply : BaseModel
 {

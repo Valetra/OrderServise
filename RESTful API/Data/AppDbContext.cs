@@ -1,7 +1,7 @@
-﻿using apiForRadBot.Data.Models;
+﻿using RESTful_API.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace apiForRadBot.Data;
+namespace RESTful_API.Data;
 
 public class AppDbContext : DbContext
 {

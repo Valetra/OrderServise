@@ -1,6 +1,6 @@
 ﻿using Contracts;
 
-namespace apiForRadBot.Data.ResponseObject;
+namespace RESTful_API.Data.ResponseObject;
 
 public class ResponseCategoryObject : ICategory
 {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using apiForRadBot.Data.Repositories.Interfaces;
-using apiForRadBot.Data.Models.Base;
+using RESTful_API.Data.Repositories.Interfaces;
+using RESTful_API.Data.Models.Base;
 
-namespace apiForRadBot.Data.Repositories.Implimentations;
+namespace RESTful_API.Data.Repositories.Implimentations;
 
 public class BaseRepository<TDbModel> : IBaseRepository<TDbModel> where TDbModel : BaseModel
 {

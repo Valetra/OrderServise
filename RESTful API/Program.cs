@@ -1,8 +1,8 @@
-using apiForRadBot.Core.Services.Implimentations;
-using apiForRadBot.Core.Services.Interfaces;
-using apiForRadBot.Data;
-using apiForRadBot.Data.Repositories.Implimentations;
-using apiForRadBot.Data.Repositories.Interfaces;
+using RESTful_API.Core.Services.Implimentations;
+using RESTful_API.Core.Services.Interfaces;
+using RESTful_API.Data;
+using RESTful_API.Data.Repositories.Implimentations;
+using RESTful_API.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 

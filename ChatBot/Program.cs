@@ -13,8 +13,6 @@ RadBot radBot = new(myData.TelegramBotToken, cancellationTokenSource.Token, cont
 
 Console.WriteLine($"Start listening for @{await radBot.GetUsername()}");
 
-
-
 Console.ReadLine();
 
 cancellationTokenSource.Cancel();

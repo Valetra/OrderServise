@@ -1,6 +1,6 @@
-﻿using apiForRadBot.Data.Models;
+﻿using RESTful_API.Data.Models;
 
-namespace apiForRadBot.Data.Repositories.Interfaces;
+namespace RESTful_API.Data.Repositories.Interfaces;
 
 public interface ISupplyRepository
 {

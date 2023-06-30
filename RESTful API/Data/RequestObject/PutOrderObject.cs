@@ -1,4 +1,4 @@
-﻿namespace apiForRadBot.Data.RequestObject;
+﻿namespace RESTful_API.Data.RequestObject;
 
 public class PutOrderObject
 {
