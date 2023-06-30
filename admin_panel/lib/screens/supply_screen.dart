@@ -101,7 +101,8 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
       'Цена',
       'Время приготовления',
       'Категория',
-      'Удалить'
+      'Удалить',
+      'Опубликовано'
     ];
 
     return DataTable(
@@ -122,7 +123,8 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           supply.price,
           supply.cookingTime,
           supply.categoryId,
-          "Удалить"
+          "Удалить",
+          "Опубликовано"
         ];
 
         Map<String, num> columnIndexes = {
@@ -131,6 +133,7 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           "cookTimeColumn": 2,
           "categoryColumn": 3,
           "deleteColumn": 4,
+          "published": 5,
         };
 
         dynamic cellColor;
@@ -139,12 +142,12 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
           return const Color.fromARGB(255, 151, 208, 212);
         }
 
-        Color newProductCellsColor(Set<MaterialState> states) {
+        Color notPublishedCellsColor(Set<MaterialState> states) {
           return const Color.fromARGB(255, 224, 167, 121);
         }
 
-        if (supply.name == "Новый продукт") {
-          cellColor = MaterialStateProperty.resolveWith(newProductCellsColor);
+        if (supply.id == null) {
+          cellColor = MaterialStateProperty.resolveWith(notPublishedCellsColor);
         } else {
           cellColor = MaterialStateProperty.resolveWith(defaultCellsColor);
         }
@@ -157,8 +160,10 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
                 return getEditSupplyCell(supply, cell, index);
               } else if (index == columnIndexes["categoryColumn"]!) {
                 return getDropdownCategoriesCell(supply);
-              } else {
+              } else if (index == columnIndexes["deleteColumn"]!) {
                 return getDeleteSupplyCell(supply);
+              } else {
+                return getPuplishedCell(supply);
               }
             }),
             color: cellColor);
@@ -184,6 +189,52 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
     );
   }
 
+  DataCell getPuplishedCell(Supply supply) {
+    ButtonStyle publishedButtonStyle = ButtonStyle(
+      backgroundColor:
+          MaterialStateProperty.all(const Color.fromARGB(255, 126, 214, 108)),
+    );
+
+    ButtonStyle notPublishedButtonStyle = ButtonStyle(
+      backgroundColor:
+          MaterialStateProperty.all(Color.fromARGB(255, 226, 108, 108)),
+      overlayColor:
+          MaterialStateProperty.all(const Color.fromARGB(255, 126, 214, 108)),
+    );
+
+    ButtonStyle buttonStyle;
+
+    if (supply.id == null) {
+      buttonStyle = notPublishedButtonStyle;
+      return DataCell(
+        ElevatedButton(
+          style: buttonStyle,
+          onPressed: () {
+            publishSupply(supply);
+          },
+          child: const Icon(
+            Icons.check,
+            size: 22,
+            color: Color.fromARGB(255, 0, 0, 0),
+          ),
+        ),
+      );
+    } else {
+      buttonStyle = publishedButtonStyle;
+      return DataCell(
+        ElevatedButton(
+          style: buttonStyle,
+          onPressed: null,
+          child: const Icon(
+            Icons.check,
+            size: 22,
+            color: Color.fromARGB(255, 0, 0, 0),
+          ),
+        ),
+      );
+    }
+  }
+
   DataCell getDeleteSupplyCell(Supply supply) {
     return DataCell(
       ElevatedButton(
@@ -194,7 +245,11 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
               MaterialStateProperty.all(const Color.fromARGB(255, 255, 90, 90)),
         ),
         onPressed: () {
-          deleteSupply(supply);
+          if (supply.id == null) {
+            deleteLocalSupply(supply);
+          } else {
+            deleteRemoteSupply(supply);
+          }
         },
         child: const Icon(
           Icons.delete,
@@ -234,7 +289,13 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
     );
   }
 
-  Future deleteSupply(Supply supply) async {
+  deleteLocalSupply(Supply supply) {
+    setState(() {
+      supplies.remove(supply);
+    });
+  }
+
+  Future deleteRemoteSupply(Supply supply) async {
     deleteSupply(Guid supplyId) async {
       return await RemotesService().deleteSupply(supplyId);
     }
@@ -245,41 +306,21 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
     });
   }
 
-  createNewSupply() async {
+  createNewSupply() {
     Supply newSupply = Supply(
         name: "Новый продукт",
         price: 0,
         cookingTime: "00:00:00",
         categoryId: categories.first.id!);
 
-    createSupply() async {
-      try {
-        await RemotesService().createSupply(newSupply);
-      } catch (e) {
-        return showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            backgroundColor: const Color.fromARGB(255, 184, 77, 77),
-            title: const Text('Ошибка создания продукта'),
-            content: const Text(
-                'Переименуйте "Новый продукт", после чего высможете создать ещё один новый продукт.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.pop(context, 'назад'),
-                child: const Text(
-                  'назад',
-                  style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-    }
+    supplies.add(newSupply);
 
-    await createSupply();
+    setState(() {});
+  }
+
+  publishSupply(Supply supply) async {
+    await RemotesService().createSupply(supply);
     supplies = await getSupplies();
-
     setState(() {});
   }
 
@@ -291,37 +332,14 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
     );
 
     updateSupply(Supply supply) async {
-      Supply updatedSupply;
-
       if (name == null) {
         return null;
       }
 
-      try {
-        supply.name = name;
-        updatedSupply = await RemotesService().updateSupply(supply);
-      } catch (e) {
-        return showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            backgroundColor: const Color.fromARGB(255, 184, 77, 77),
-            title: const Text('Ошибка переименования продукта'),
-            content: const Text(
-                'Повторение имени продукта исключено. Выберите другое имя.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.pop(context, 'назад'),
-                child: const Text(
-                  'назад',
-                  style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
-                ),
-              ),
-            ],
-          ),
-        );
+      supply.name = name;
+      if (supply.id != null) {
+        return await RemotesService().updateSupply(supply);
       }
-
-      return updatedSupply;
     }
 
     setState(() {
@@ -337,12 +355,21 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
 
   Future editSupplyCategoryId(Supply editSupply) async {
     updateOrder(Supply supply) async {
-      Supply updatedSupply = await RemotesService().updateSupply(editSupply);
-      return updatedSupply;
+      if (supply.id != null) {
+        return await RemotesService().updateSupply(editSupply);
+      }
     }
 
     setState(() {
       updateOrder(editSupply);
+
+      supplies = supplies.map((supply) {
+        final isEditedSupply = supply == editSupply;
+
+        return isEditedSupply
+            ? supply.copy(categoryId: editSupply.categoryId)
+            : supply;
+      }).toList();
     });
   }
 
@@ -357,8 +384,9 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         return null;
       }
       supply.price = int.parse(price);
-      Supply updatedSupply = await RemotesService().updateSupply(supply);
-      return updatedSupply;
+      if (supply.id != null) {
+        return await RemotesService().updateSupply(supply);
+      }
     }
 
     setState(() {
@@ -384,8 +412,9 @@ class _SuppliesScreenState extends State<SuppliesScreen> {
         return null;
       }
       supply.cookingTime = cookingTime;
-      Supply updatedSupply = await RemotesService().updateSupply(supply);
-      return updatedSupply;
+      if (supply.id != null) {
+        return await RemotesService().updateSupply(supply);
+      }
     }
 
     setState(() {
