@@ -25,6 +25,7 @@ builder.Services.AddScoped<ISupplyRepository, SupplyRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICategoryReposetory, CategoryReposetory>();
 builder.Services.AddScoped<IOrderSupplyRepository, OrderSupplyRepository>();
+builder.Services.AddScoped<IOrderSubscribeRepository, OrderSubscribeRepository>();
 builder.Services.AddScoped<IBotService, BotService>();
 
 var app = builder.Build();

@@ -29,4 +29,11 @@ public interface IBotService
     Task<Category> AddCategory(Category category);
     Task<Category> UpdateCategory(Category category);
     Task DeleteCategory(Guid id);
+
+    //OrderSubscribe processing
+    Task<IEnumerable<OrderSubscribe>> GetAllSubscribes();
+    Task<OrderSubscribe?> GetOrderSubscribe(Guid id);
+    Task<OrderSubscribe> AddOrderSubscribe(OrderSubscribe orderSubscribe);
+    Task<OrderSubscribe> UpdateOrderSubscribe(OrderSubscribe orderSubscribe);
+    Task DeleteOrderSubscribe(Guid id);
 }

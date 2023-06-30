@@ -14,19 +14,22 @@ public class BotService : IBotService
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderSupplyRepository _orderSupplyRepository;
     private readonly ICategoryReposetory _categoryRepository;
+    private readonly IOrderSubscribeRepository _orderSubscribeRepository;
 
     public BotService
     (
         ISupplyRepository supplyRepository,
         IOrderRepository orderRepository,
         IOrderSupplyRepository orderSupplyRepository,
-        ICategoryReposetory categoryRepository
+        ICategoryReposetory categoryRepository,
+        IOrderSubscribeRepository orderSubscribeRepository
     )
     {
         _supplyRepository = supplyRepository;
         _orderRepository = orderRepository;
         _orderSupplyRepository = orderSupplyRepository;
         _categoryRepository = categoryRepository;
+        _orderSubscribeRepository = orderSubscribeRepository;
     }
 
     //Supply processing
@@ -112,4 +115,22 @@ public class BotService : IBotService
     }
     public async Task<Category> UpdateCategory(Category category) => await _categoryRepository.Update(category);
     public async Task DeleteCategory(Guid id) => await _categoryRepository.Delete(id);
+
+    //OrderSubscribe processing
+    public async Task<IEnumerable<OrderSubscribe>> GetAllSubscribes() => await _orderSubscribeRepository.GetAll();
+    public async Task<OrderSubscribe?> GetOrderSubscribe(Guid id) => await _orderSubscribeRepository.Get(id);
+    public async Task<OrderSubscribe> AddOrderSubscribe(OrderSubscribe orderSubscribe)
+    {
+        OrderSubscribe newOrderSubscribe = new()
+        {
+            OrderId = orderSubscribe.OrderId,
+            CallbackData = orderSubscribe.CallbackData
+        };
+
+        OrderSubscribe orderSubscribeEntity = await _orderSubscribeRepository.Create(newOrderSubscribe);
+
+        return orderSubscribeEntity;
+    }
+    public async Task<OrderSubscribe> UpdateOrderSubscribe(OrderSubscribe orderSubscribe) => await _orderSubscribeRepository.Update(orderSubscribe);
+    public async Task DeleteOrderSubscribe(Guid id) => await _orderSubscribeRepository.Delete(id);
 }
