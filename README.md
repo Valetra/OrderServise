@@ -1,5 +1,5 @@
 # Servise for ordering and processing orders.
-## This servise have 3 projects that constitutes a full service for creating by customer an order/preorder in cafe and processing it in admin panel.
+## This servise have 3 projects that constitutes a full service for creating an order/preorder by customer in establishment and processing it in admin panel.
 ### Service projects: RESTful API(done), ChatBot(done), AdminPanel(in progress).
 
 
