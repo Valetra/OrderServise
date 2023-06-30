@@ -6,15 +6,15 @@ public class ControllerManager
 
     public string GetSupplyURL()
     {
-        return $"{_apiUrl}supply";
+        return $"{_apiUrl}Supply";
     }
     public string GetOrderURL()
     {
-        return $"{_apiUrl}order";
+        return $"{_apiUrl}Order";
     }
     public string GetCategoryURL()
     {
-        return $"{_apiUrl}category";
+        return $"{_apiUrl}Category";
     }
 
     public ControllerManager(string apiUrl)

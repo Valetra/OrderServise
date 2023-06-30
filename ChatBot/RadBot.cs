@@ -26,6 +26,7 @@ public class RadBot
     private readonly ControllerManager _controllerManager;
     private readonly TelegramBotClient _client;
     private Order _order = new();
+    private long _chatId;
 
     public RadBot(string token, CancellationToken cancellationToken, ControllerManager controllerManager)
     {
@@ -76,9 +77,10 @@ public class RadBot
         List<ICategory> categories = await CategoryManager.GetCategoriesFromAPI(_controllerManager);
         List<ISupply> supplies = await SupplyManager.GetSuppliesFromAPI(_controllerManager);
 
+
         if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
         {
-            var chatId = update.Message.Chat.Id;
+            _chatId = update.Message.Chat.Id;
             var messageText = update.Message.Text;
 
             string firstName;
@@ -87,32 +89,32 @@ public class RadBot
             else
                 firstName = "Незнакомец";
 
-            Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+            Console.WriteLine($"Received a '{messageText}' message in chat {_chatId}.");
 
             switch (messageText)
             {
                 case "/start":
-                    await Start(firstName, chatId, cancellationToken);
+                    await Start(firstName, _chatId, cancellationToken);
                     break;
                 case BotMenuButtons.makeOrder:
-                    await MakeOrder(chatId, cancellationToken, categories, supplies);
+                    await MakeOrder(_chatId, cancellationToken, categories, supplies);
                     break;
                 case BotMenuButtons.showMenu:
-                    await ShowMenu(chatId, cancellationToken);
+                    await ShowMenu(_chatId, cancellationToken);
                     break;
                 case BotMenuButtons.showContact:
-                    await ShowContact(chatId, cancellationToken);
+                    await ShowContact(_chatId, cancellationToken);
                     break;
                 case BotMenuButtons.showLocation:
-                    await ShowLocation(chatId, cancellationToken);
+                    await ShowLocation(_chatId, cancellationToken);
                     break;
             }
         }
         if (update.CallbackQuery != null && update.CallbackQuery.Data != "notButton")
-            await HandleCallbackQuery(botClient, update.CallbackQuery, cancellationToken);
+            await HandleCallbackQuery(botClient, update.CallbackQuery, _chatId, cancellationToken);
     }
 
-    private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
+    private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, long chatId, CancellationToken cancellationToken)
     {
         string? callbackData = callbackQuery.Data;
         string actionText = "";
@@ -147,7 +149,9 @@ public class RadBot
         }
         else if (callbackData == "accept")
         {
-            await OrderManager.PostOrderToAPI(_controllerManager, _order);
+            Guid orderId = await OrderManager.PostOrderToAPI(_controllerManager, _order);
+
+            //Вызвать API метод создающий запись в таблицу OrderSubscribe, передать ему (orderId, _chatId);
 
             actionText = $"Ваш заказ был принят в обработку.\nОжидайте подтверждения.";
             buttons = null;
