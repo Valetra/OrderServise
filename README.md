@@ -4,7 +4,7 @@
 
 
 ## Two files need to be added for successful  execution :
-### 1) RadBot/ChatBot/private_data.cs
+### 1) OrderServise/ChatBot/private_data.cs
 ```
 namespace private_data
 {
@@ -14,7 +14,7 @@ namespace private_data
     }
 }
 ```
-### 2) RadBot/RESTful API/appsettings.json
+### 2) OrderServise/RESTful API/appsettings.json
 ```
 {
   "ConnectionStrings": {
