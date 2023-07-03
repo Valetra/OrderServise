@@ -144,7 +144,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
           totalPrice += supply.price * supply.count as int;
         }
         supplies += 'Итого: $totalPrice₽';
-
+        //Воспользоваться Future builder: https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html
         showDialog<String>(
           context: context,
           builder: (BuildContext context) => AlertDialog(

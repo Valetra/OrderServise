@@ -1,6 +1,6 @@
 ﻿using private_data;
 
-namespace RESTful_API.MessangerLogic;
+namespace RESTful_API.MessengerLogic;
 
 internal class MessageManager
 {

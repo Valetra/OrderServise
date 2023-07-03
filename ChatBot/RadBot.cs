@@ -26,7 +26,6 @@ public class RadBot
     private readonly ControllerManager _controllerManager;
     private readonly TelegramBotClient _client;
     private Order _order = new();
-    private long _chatId;
 
     public RadBot(string token, CancellationToken cancellationToken, ControllerManager controllerManager)
     {
@@ -80,7 +79,7 @@ public class RadBot
 
         if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
         {
-            _chatId = update.Message.Chat.Id;
+            var chatId = update.Message.Chat.Id;
             var messageText = update.Message.Text;
 
             string firstName;
@@ -89,34 +88,35 @@ public class RadBot
             else
                 firstName = "Незнакомец";
 
-            Console.WriteLine($"Received a '{messageText}' message in chat {_chatId}.");
+            Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
 
             switch (messageText)
             {
                 case "/start":
-                    await Start(firstName, _chatId, cancellationToken);
+                    await Start(firstName, chatId, cancellationToken);
                     break;
                 case BotMenuButtons.makeOrder:
-                    await MakeOrder(_chatId, cancellationToken, categories, supplies);
+                    await MakeOrder(chatId, cancellationToken, categories, supplies);
                     break;
                 case BotMenuButtons.showMenu:
-                    await ShowMenu(_chatId, cancellationToken);
+                    await ShowMenu(chatId, cancellationToken);
                     break;
                 case BotMenuButtons.showContact:
-                    await ShowContact(_chatId, cancellationToken);
+                    await ShowContact(chatId, cancellationToken);
                     break;
                 case BotMenuButtons.showLocation:
-                    await ShowLocation(_chatId, cancellationToken);
+                    await ShowLocation(chatId, cancellationToken);
                     break;
             }
         }
         if (update.CallbackQuery != null && update.CallbackQuery.Data != "notButton")
-            await HandleCallbackQuery(botClient, update.CallbackQuery, cancellationToken);
+            await HandleCallbackQuery(botClient, update, cancellationToken);
     }
 
-    private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, CancellationToken cancellationToken)
+    private async Task<Message> HandleCallbackQuery(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
-        string? callbackData = callbackQuery.Data;
+        long? chatId = update.CallbackQuery?.Message?.Chat.Id;
+        string? callbackData = update.CallbackQuery?.Data;
         string actionText = "";
         InlineKeyboardMarkup? buttons = null;
         InlineKeyboardButtons newButtons;
@@ -130,6 +130,11 @@ public class RadBot
         if (callbackData is null)
         {
             throw new ArgumentNullException("callbackData is null");
+        }
+
+        if (chatId is null)
+        {
+            throw new ArgumentNullException("chatId is null");
         }
 
         if (callbackData == "back")
@@ -150,7 +155,7 @@ public class RadBot
         else if (callbackData == "accept")
         {
             Guid orderId = await OrderManager.PostOrderToAPI(_controllerManager, _order);
-            OrderSubscribe orderSubscribe = new(orderId, _chatId);
+            OrderSubscribe orderSubscribe = new(orderId, chatId ?? 0);
 
             await OrderSubscribeManager.PostOrderSubscribeToAPI(_controllerManager, orderSubscribe);
 
@@ -243,14 +248,14 @@ public class RadBot
                 buttons = newButtons.GetCategoryButtons();
             }
         }
-        return await CallbackAction(botClient, callbackQuery, actionText, buttons, cancellationToken);
+        return await CallbackAction(botClient, update, actionText, buttons, cancellationToken);
     }
 
-    private async Task<Message> CallbackAction(ITelegramBotClient botClient, CallbackQuery callbackQuery, string actionText, InlineKeyboardMarkup? buttons, CancellationToken cancellationToken)
+    private async Task<Message> CallbackAction(ITelegramBotClient botClient, Update update, string actionText, InlineKeyboardMarkup? buttons, CancellationToken cancellationToken)
     {
         return await botClient.EditMessageTextAsync(
-          messageId: callbackQuery.Message.MessageId,
-          chatId: callbackQuery.Message.Chat.Id,
+          messageId: update.CallbackQuery.Message.MessageId,
+          chatId: update.CallbackQuery.Message.Chat.Id,
           text: actionText,
           replyMarkup: buttons,
           cancellationToken: cancellationToken);

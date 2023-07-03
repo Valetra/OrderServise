@@ -1,4 +1,4 @@
-﻿namespace RESTful_API.MessangerLogic
+﻿namespace RESTful_API.MessengerLogic
 {
     public class OrderStatus
     {

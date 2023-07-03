@@ -5,7 +5,7 @@ using RESTful_API.Data.RequestObject;
 using RESTful_API.Core.Mapper;
 using RESTful_API.Data.ResponseObject;
 using System.Data;
-using RESTful_API.MessangerLogic;
+using RESTful_API.MessengerLogic;
 
 namespace RESTful_API.Core.Services.Implimentations;
 
@@ -60,16 +60,14 @@ public class BotService : IBotService
 
         DateTime today = DateTime.Today;
 
-        int todayOrdersCount = allOrders.Where(o =>
-            o.CreateDateTime.ToLocalTime() >= today &&
-            o.CreateDateTime.ToLocalTime() <= today.AddDays(1))
+        int todayOrdersCount = allOrders.Where(o => o.CreateDateTime.ToLocalTime() >= today && o.CreateDateTime.ToLocalTime() <= today.AddDays(1))
             .Count();
 
         Order newOrder = new();
 
         var newOrderTime = newOrder.CreateDateTime.ToLocalTime();
 
-        newOrder.Number = ++todayOrdersCount;
+        newOrder.Number = todayOrdersCount + 1;
 
         Order orderEntity = await _orderRepository.Create(newOrder);
 
