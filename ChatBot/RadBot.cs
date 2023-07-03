@@ -150,10 +150,12 @@ public class RadBot
         else if (callbackData == "accept")
         {
             Guid orderId = await OrderManager.PostOrderToAPI(_controllerManager, _order);
+            OrderSubscribe orderSubscribe = new(orderId, _chatId);
 
-            //Вызвать API метод создающий запись в таблицу OrderSubscribe, передать ему (orderId, _chatId);
+            await OrderSubscribeManager.PostOrderSubscribeToAPI(_controllerManager, orderSubscribe);
 
             actionText = $"Ваш заказ был принят в обработку.\nОжидайте подтверждения.";
+
             buttons = null;
             _order = new();
         }

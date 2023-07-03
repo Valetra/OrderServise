@@ -16,6 +16,10 @@ public class ControllerManager
     {
         return $"{_apiUrl}Category";
     }
+    public string GetOrderSubscribeURL()
+    {
+        return $"{_apiUrl}OrderSubscribe";
+    }
 
     public ControllerManager(string apiUrl)
     {

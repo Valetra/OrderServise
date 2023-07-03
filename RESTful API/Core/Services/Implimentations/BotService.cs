@@ -5,6 +5,7 @@ using RESTful_API.Data.RequestObject;
 using RESTful_API.Core.Mapper;
 using RESTful_API.Data.ResponseObject;
 using System.Data;
+using RESTful_API.MessangerLogic;
 
 namespace RESTful_API.Core.Services.Implimentations;
 
@@ -15,6 +16,8 @@ public class BotService : IBotService
     private readonly IOrderSupplyRepository _orderSupplyRepository;
     private readonly ICategoryReposetory _categoryRepository;
     private readonly IOrderSubscribeRepository _orderSubscribeRepository;
+
+    private List<OrderStatus> _statuses = new();
 
     public BotService
     (
@@ -30,6 +33,12 @@ public class BotService : IBotService
         _orderSupplyRepository = orderSupplyRepository;
         _categoryRepository = categoryRepository;
         _orderSubscribeRepository = orderSubscribeRepository;
+
+        _statuses.Add(new("Unconfirmed", "Не подтверждён"));
+        _statuses.Add(new("Confirmed", "Подтверждён"));
+        _statuses.Add(new("In progress", "В процессе"));
+        _statuses.Add(new("Done", "Готов"));
+        _statuses.Add(new("Cancelled", "Отменён"));
     }
 
     //Supply processing
@@ -71,7 +80,19 @@ public class BotService : IBotService
 
         return orderEntity;
     }
-    public async Task<Order> UpdateOrder(Order order) => await _orderRepository.Update(order);
+    public async Task<Order> UpdateOrder(Order order)
+    {
+        List<OrderSubscribe> orderSubscribes = await _orderSubscribeRepository.GetAll();
+        var chaId = orderSubscribes.Where(o => o.OrderId == order.Id).Select(o => o.CallbackData).First();
+
+        string orderStatus = _statuses.Where(o => o.Value == order.Status).Select(o => o.Label).First();
+
+        Message message = new() { Chat_id = chaId, Text = $"Номер вашего заказа #{order.Number}\nСтатус заказа: {orderStatus}" };
+
+        var response = await MessageManager.SendMessageToChat(message);
+
+        return await _orderRepository.Update(order);
+    }
     public async Task DeleteOrder(Guid id) => await _orderRepository.Delete(id);
 
     //OrderSupply processing

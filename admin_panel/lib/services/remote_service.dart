@@ -7,12 +7,15 @@ import 'package:admin_panel/models/responceObjects/responseOrderObject.dart';
 import 'package:http/http.dart' as http;
 
 class RemotesService {
+  String DebugApiUri = 'https://localhost:7096';
+  String BuildApiUri = 'http://localhost:5132';
+
   Future<Category> updateCategory(Category category) async {
     var client = http.Client();
 
     String jsonRequest = '{"id": "${category.id}", "name": "${category.name}"}';
 
-    var uri = Uri.parse('http://localhost:5132/category');
+    var uri = Uri.parse('$DebugApiUri/category');
     var response = await client.put(uri,
         headers: {'Content-Type': 'application/json'}, body: jsonRequest);
 
@@ -30,7 +33,7 @@ class RemotesService {
 
     String jsonRequest = '{"name": "${category.name}"}';
 
-    var uri = Uri.parse('http://localhost:5132/category');
+    var uri = Uri.parse('$DebugApiUri/category');
     var response = await client.post(uri,
         headers: {'Content-Type': 'application/json'}, body: jsonRequest);
 
@@ -42,7 +45,7 @@ class RemotesService {
   Future deleteCategory(Guid categoryId) async {
     var client = http.Client();
 
-    var uri = Uri.parse('http://localhost:5132/category/$categoryId');
+    var uri = Uri.parse('$DebugApiUri/category/$categoryId');
 
     var response =
         await client.delete(uri, headers: {'Content-Type': 'application/json'});
@@ -55,7 +58,7 @@ class RemotesService {
   Future<List<Supply>> getOrderSupplies(Guid id) async {
     var client = http.Client();
 
-    var uri = Uri.parse('http://localhost:5132/order/getOrderWithSupplies/$id');
+    var uri = Uri.parse('$DebugApiUri/order/getOrderWithSupplies/$id');
     var response = await client.get(uri);
 
     if (response.statusCode == 200) {
@@ -74,7 +77,7 @@ class RemotesService {
     String jsonRequest =
         '{"name": "${supply.name}", "count" : ${supply.count}, "price" : ${supply.price}, "cookingTime": "${supply.cookingTime}", "categoryId": "${supply.categoryId}"}';
 
-    var uri = Uri.parse('http://localhost:5132/supply');
+    var uri = Uri.parse('$DebugApiUri/supply');
     var response = await client.post(uri,
         headers: {'Content-Type': 'application/json'}, body: jsonRequest);
 
@@ -86,7 +89,7 @@ class RemotesService {
   Future deleteSupply(Guid supplyId) async {
     var client = http.Client();
 
-    var uri = Uri.parse('http://localhost:5132/supply/$supplyId');
+    var uri = Uri.parse('$DebugApiUri/supply/$supplyId');
 
     var response =
         await client.delete(uri, headers: {'Content-Type': 'application/json'});
@@ -99,7 +102,7 @@ class RemotesService {
   Future<List<Order>> getOrderList() async {
     var client = http.Client();
 
-    var uri = Uri.parse('http://localhost:5132/order');
+    var uri = Uri.parse('$DebugApiUri/order');
     var response = await client.get(uri);
 
     if (response.statusCode == 200) {
@@ -116,7 +119,7 @@ class RemotesService {
     String jsonRequest =
         '{"id": "${order.id}", "status": "${order.status}", "payed" : ${order.payed}}';
 
-    var uri = Uri.parse('http://localhost:5132/order');
+    var uri = Uri.parse('$DebugApiUri/order');
     var response = await client.put(uri,
         headers: {'Content-Type': 'application/json'}, body: jsonRequest);
 
@@ -125,13 +128,13 @@ class RemotesService {
 
       return orderFromJson(json);
     }
-    throw Exception("Nothing to return.");
+    throw Exception("${response.reasonPhrase}");
   }
 
   Future<List<Supply>> getSupplyList() async {
     var client = http.Client();
 
-    var uri = Uri.parse('http://localhost:5132/supply');
+    var uri = Uri.parse('$DebugApiUri/supply');
     var response = await client.get(uri);
 
     if (response.statusCode == 200) {
@@ -148,7 +151,7 @@ class RemotesService {
     String jsonRequest =
         '{"id": "${supply.id}", "name": "${supply.name}", "count" : ${supply.count}, "price" : ${supply.price}, "cookingTime": "${supply.cookingTime}", "categoryId": "${supply.categoryId}"}';
 
-    var uri = Uri.parse('http://localhost:5132/supply');
+    var uri = Uri.parse('$DebugApiUri/supply');
     var response = await client.put(uri,
         headers: {'Content-Type': 'application/json'}, body: jsonRequest);
 
@@ -164,7 +167,7 @@ class RemotesService {
   Future<List<Category>> getCategoryList() async {
     var client = http.Client();
 
-    var uri = Uri.parse('http://localhost:5132/category');
+    var uri = Uri.parse('$DebugApiUri/category');
     var response = await client.get(uri);
 
     if (response.statusCode == 200) {

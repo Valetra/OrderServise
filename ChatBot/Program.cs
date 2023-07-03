@@ -5,7 +5,7 @@ MyPrivateData myData = new MyPrivateData();
 
 CancellationTokenSource cancellationTokenSource = new();
 
-string apiPath = "http://localhost:5132/";
+string apiPath = "https://localhost:7096/"; //http://localhost:5132/
 
 ControllerManager controllerManager = new(apiPath);
 

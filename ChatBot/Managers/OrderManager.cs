@@ -17,4 +17,5 @@ internal class OrderManager
 
         return new(uri.Replace($"{controllerManager.GetOrderURL()}/", ""));
     }
+
 }

@@ -79,7 +79,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   List<OrderStatus> statuses = [
     OrderStatus("Unconfirmed", "Не подтверждён"),
     OrderStatus("Confirmed", "Подтверждён"),
-    OrderStatus("In progres", "В процессе"),
+    OrderStatus("In progress", "В процессе"),
     OrderStatus("Done", "Готов"),
     OrderStatus("Cancelled", "Отменён"),
   ];

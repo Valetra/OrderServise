@@ -1,8 +1,6 @@
 ﻿using RESTful_API.Core.Services.Interfaces;
 using RESTful_API.Data.Models;
-using RESTful_API.Data.RequestObject;
 using Microsoft.AspNetCore.Mvc;
-using RESTful_API.Data.ResponseObject;
 
 namespace RESTful_API.Controllers;
 
