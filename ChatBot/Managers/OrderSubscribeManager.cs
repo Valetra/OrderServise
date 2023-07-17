@@ -11,6 +11,6 @@ internal class OrderSubscribeManager
 
         JsonContent content = JsonContent.Create(orderSubscribe);
 
-        var response = await httpClient.PostAsync(controllerManager.GetOrderSubscribeURL(), content);
+        await httpClient.PostAsync(controllerManager.GetOrderSubscribeURL(), content);
     }
 }

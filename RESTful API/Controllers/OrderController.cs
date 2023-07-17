@@ -51,7 +51,7 @@ public class OrderController : ControllerBase
 
         orderEntity = await _botService.AddOrder(order);
 
-        return CreatedAtAction(nameof(GetOrder), new { id = orderEntity.Id }, orderEntity);
+        return CreatedAtAction(nameof(GetOrder), new { id = orderEntity.Id, number = orderEntity.Number }, orderEntity);
     }
 
     [HttpPut]

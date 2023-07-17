@@ -154,12 +154,16 @@ public class RadBot
         }
         else if (callbackData == "accept")
         {
-            Guid orderId = await OrderManager.PostOrderToAPI(_controllerManager, _order);
+            var response = await OrderManager.PostOrderToAPI(_controllerManager, _order);
+
+            Guid orderId = response.Item1;
+            int orderNumber = response.Item2;
+
             OrderSubscribe orderSubscribe = new(orderId, chatId ?? 0);
 
             await OrderSubscribeManager.PostOrderSubscribeToAPI(_controllerManager, orderSubscribe);
 
-            actionText = $"Ваш заказ был принят в обработку.\nОжидайте подтверждения.";
+            actionText = $"Ваш заказ был принят в обработку.\nОжидайте подтверждения.\nНомер заказа #{orderNumber}";
 
             buttons = null;
             _order = new();

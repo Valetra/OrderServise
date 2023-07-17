@@ -14,7 +14,7 @@ public class InlineKeyboardButtons
 
     private readonly List<InlineKeyboardButton> _backButton = new()
     {
-        InlineKeyboardButton.WithCallbackData(text: "Назад", callbackData: "back")
+        InlineKeyboardButton.WithCallbackData(text: "Назад ⬅️", callbackData: "back")
     };
 
     private readonly List<InlineKeyboardButton> _bucketButton = new()
@@ -40,11 +40,23 @@ public class InlineKeyboardButtons
 
         rowList.Add(new List<InlineKeyboardButton>
         {
-            InlineKeyboardButton.WithCallbackData(text: "Принять заказ", callbackData: "accept")
+            InlineKeyboardButton.WithCallbackData(text: "Отправить заказ на обработку", callbackData: "accept")
         });
         rowList.Add(_backButton);
 
         return new InlineKeyboardMarkup(rowList);
+    }
+
+    public static void InsertButtonsInRowList(List<List<InlineKeyboardButton>> rowList, List<InlineKeyboardButton> buttons)
+    {
+        foreach (var button in buttons)
+        {
+            List<InlineKeyboardButton> buttonInRow = new()
+                {
+                    button
+                };
+            rowList.Add(buttonInRow);
+        }
     }
 
     public InlineKeyboardMarkup GetCategoryButtons()
@@ -58,12 +70,12 @@ public class InlineKeyboardButtons
 
         List<InlineKeyboardButton> cancelButton = new()
         {
-            InlineKeyboardButton.WithCallbackData(text: "Отмена заказа", callbackData: "cancel")
+            InlineKeyboardButton.WithCallbackData(text: "Отмена заказа 🗑️", callbackData: "cancel")
         };
 
         if (!_order.SuppliesId.Any())
         {
-            rowList.Add(categoryButtons);
+            InsertButtonsInRowList(rowList, categoryButtons);
             rowList.Add(cancelButton);
 
             return new InlineKeyboardMarkup(rowList);
@@ -88,7 +100,7 @@ public class InlineKeyboardButtons
                 });
             }
             rowList.Add(_bucketButton);
-            rowList.Add(categoryButtons);
+            InsertButtonsInRowList(rowList, categoryButtons);
             rowList.Add(_acceptOrderButton);
             rowList.Add(cancelButton);
 
@@ -108,7 +120,7 @@ public class InlineKeyboardButtons
 
         if (!_order.SuppliesId.Any())
         {
-            rowList.Add(subcategoryButtons);
+            InsertButtonsInRowList(rowList, subcategoryButtons);
             rowList.Add(_backButton);
 
             return new InlineKeyboardMarkup(rowList);
@@ -133,7 +145,7 @@ public class InlineKeyboardButtons
                 });
             }
             rowList.Add(_bucketButton);
-            rowList.Add(subcategoryButtons);
+            InsertButtonsInRowList(rowList, subcategoryButtons);
             rowList.Add(_backButton);
 
             return new InlineKeyboardMarkup(rowList);

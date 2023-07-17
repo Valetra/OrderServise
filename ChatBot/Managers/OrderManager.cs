@@ -5,7 +5,7 @@ namespace ChatBot.Managers;
 
 internal class OrderManager
 {
-    public static async Task<Guid> PostOrderToAPI(ControllerManager controllerManager, Order order)
+    public static async Task<(Guid, int)> PostOrderToAPI(ControllerManager controllerManager, Order order)
     {
         HttpClient httpClient = new HttpClient();
 
@@ -13,9 +13,13 @@ internal class OrderManager
 
         var responceMesage = await httpClient.PostAsync(controllerManager.GetOrderURL(), content);
 
-        var uri = responceMesage.Headers.Location.AbsoluteUri;
+        var absolutePath = responceMesage.Headers.Location.AbsolutePath;
+        var query = responceMesage.Headers.Location.Query;
 
-        return new(uri.Replace($"{controllerManager.GetOrderURL()}/", ""));
+        Guid orderGuid = Guid.Parse(absolutePath.Replace("/Order/", ""));
+        int orderNumber = Int32.Parse(query.Replace($"?number=", ""));
+
+        return (orderGuid, orderNumber);
     }
 
 }
