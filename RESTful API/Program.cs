@@ -30,12 +30,12 @@ builder.Services.AddScoped<IBotService, BotService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+var webSocketOptions = new WebSocketOptions
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    KeepAliveInterval = TimeSpan.FromMinutes(2)
+};
+
+app.UseWebSockets(webSocketOptions);
 
 app.UseHttpsRedirection();
 

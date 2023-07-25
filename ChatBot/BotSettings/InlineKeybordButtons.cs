@@ -24,7 +24,7 @@ public class InlineKeyboardButtons
 
     List<InlineKeyboardButton> _acceptOrderButton = new()
     {
-        InlineKeyboardButton.WithCallbackData(text: "Подтвердить заказ", callbackData: "confirm")
+        InlineKeyboardButton.WithCallbackData(text: "Подтвердить заказ ☑️", callbackData: "confirm")
     };
 
     public InlineKeyboardButtons(List<ICategory> categories, List<ISupply> supplies, Order order)
@@ -40,7 +40,7 @@ public class InlineKeyboardButtons
 
         rowList.Add(new List<InlineKeyboardButton>
         {
-            InlineKeyboardButton.WithCallbackData(text: "Отправить заказ на обработку", callbackData: "accept")
+            InlineKeyboardButton.WithCallbackData(text: "Совершить заказ ✅", callbackData: "accept")
         });
         rowList.Add(_backButton);
 

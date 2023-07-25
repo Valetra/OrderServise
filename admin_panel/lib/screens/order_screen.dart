@@ -6,6 +6,7 @@ import 'package:admin_panel/widgets/scrollable_widget.dart';
 
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class OrderStatus {
   final String value;
@@ -24,13 +25,16 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
+  final _channel = WebSocketChannel.connect(
+    Uri.parse('ws://localhost:5132/ws'),
+  );
+
   List<Order> orders = List.empty();
 
   @override
   void initState() {
     super.initState();
 
-    //Fetch data from API
     getOrders();
   }
 
@@ -47,7 +51,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
     });
   }
 
-//
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as ViewArguments;
@@ -57,7 +60,20 @@ class _OrdersScreenState extends State<OrdersScreen> {
         backgroundColor: args.backgroundColor,
         title: Text(args.title),
       ),
-      body: ScrollableWidget(child: buildDataTable()),
+      body: ScrollableWidget(
+          child: StreamBuilder(
+        stream: _channel.stream,
+        builder: (context, snapshot) {
+          _channel.sink.add("Handshake");
+          if (snapshot.hasData) {
+            orders = orderListFromJson(snapshot.data);
+            orders.sort((a, b) {
+              return a.createDateTime.compareTo(b.createDateTime);
+            });
+          }
+          return buildDataTable();
+        },
+      )),
     );
   }
 
@@ -201,5 +217,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
     setState(() {
       updateOrder(editOrder);
     });
+  }
+
+  @override
+  void dispose() {
+    _channel.sink.close();
+    super.dispose();
   }
 }
